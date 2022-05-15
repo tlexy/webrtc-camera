@@ -140,8 +140,8 @@ size_t CalcBufferSize(VideoType type, int width, int height);
 //  std::vector<uint8_t> tmp_uv_planes_;
 //};
 //
-//// Convert VideoType to libyuv FourCC type
-//int ConvertVideoType(VideoType video_type);
+// Convert VideoType to libyuv FourCC type
+int ConvertVideoType(VideoType video_type);
 
 }  // namespace webrtc
 

@@ -97,6 +97,7 @@ int32_t DeviceInfoDS::Init() {
   }
   return 0;
 }
+
 uint32_t DeviceInfoDS::NumberOfDevices() {
   std::lock_guard<std::mutex> lock(_apiLock);
   return GetDeviceInfo(0, 0, 0, 0, 0, 0, 0);

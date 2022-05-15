@@ -91,14 +91,14 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
     RTC_LOG(LS_INFO) << "Failed to add the capture device to the graph.";
     return -1;
   }
-
+  //获得_captureFilter的输出引脚
   _outputCapturePin = GetOutputPin(_captureFilter, PIN_CATEGORY_CAPTURE);
   if (!_outputCapturePin) {
     RTC_LOG(LS_INFO) << "Failed to get output capture pin";
     return -1;
   }
 
-  // Create the sink filte used for receiving Captured frames.
+  // Create the sink filter used for receiving Captured frames.
   sink_filter_ = new ComRefCount<CaptureSinkFilter>(this);
 
   hr = _graphBuilder->AddFilter(sink_filter_, SINK_FILTER_NAME);
@@ -106,7 +106,7 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
     RTC_LOG(LS_INFO) << "Failed to add the send filter to the graph.";
     return -1;
   }
-
+  //获得输入引脚（摄像头的数据将从底层通过这个接口传递给上层？？？）
   _inputSendPin = GetInputPin(sink_filter_);
   if (!_inputSendPin) {
     RTC_LOG(LS_INFO) << "Failed to get input send pin";

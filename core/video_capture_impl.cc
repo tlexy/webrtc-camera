@@ -20,7 +20,7 @@
 #include "common/ref_counted_object.h"
 #include "common/time_utils.h"
 //#include "rtc_base/trace_event.h"
-//#include "third_party/libyuv/include/libyuv.h"
+#include "3rd/libyuv/include/libyuv.h"
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -157,23 +157,23 @@ int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
   //rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(
   //    target_width, target_height, stride_y, stride_uv, stride_uv);
 
-  //libyuv::RotationMode rotation_mode = libyuv::kRotate0;
-  //if (apply_rotation) {
-  //  switch (_rotateFrame) {
-  //    case kVideoRotation_0:
-  //      rotation_mode = libyuv::kRotate0;
-  //      break;
-  //    case kVideoRotation_90:
-  //      rotation_mode = libyuv::kRotate90;
-  //      break;
-  //    case kVideoRotation_180:
-  //      rotation_mode = libyuv::kRotate180;
-  //      break;
-  //    case kVideoRotation_270:
-  //      rotation_mode = libyuv::kRotate270;
-  //      break;
-  //  }
-  //}
+  libyuv::RotationMode rotation_mode = libyuv::kRotate0;
+  if (apply_rotation) {
+    switch (_rotateFrame) {
+      case kVideoRotation_0:
+        rotation_mode = libyuv::kRotate0;
+        break;
+      case kVideoRotation_90:
+        rotation_mode = libyuv::kRotate90;
+        break;
+      case kVideoRotation_180:
+        rotation_mode = libyuv::kRotate180;
+        break;
+      case kVideoRotation_270:
+        rotation_mode = libyuv::kRotate270;
+        break;
+    }
+  }
 
   //const int conversionResult = libyuv::ConvertToI420(
   //    videoFrame, videoFrameLength, buffer.get()->MutableDataY(),

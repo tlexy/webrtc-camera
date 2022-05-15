@@ -1,2 +1,7 @@
 .vs
 Debug
+x64
+3rd/libyuv/build/.vs
+3rd/libyuv/build/Debug
+3rd/libyuv/build/x64
+3rd/libyuv/build/yuv.dir
