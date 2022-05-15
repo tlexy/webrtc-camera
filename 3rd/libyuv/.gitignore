@@ -2,7 +2,6 @@
 .landmines
 pin-log.txt
 /base
-/build
 /buildtools
 /google_apis
 /links
