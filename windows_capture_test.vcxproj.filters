@@ -66,6 +66,9 @@
     <ClCompile Include="common\time_utils.cc">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="vcm_capturer.cc">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\device_info_impl.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="common\arraysize.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="vcm_capturer.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -49,7 +49,7 @@ enum class VideoType {
 ////   - height       :frame height in pixels.
 //// Return value:    :The required size in bytes to accommodate the specified
 ////                   video frame.
-//size_t CalcBufferSize(VideoType type, int width, int height);
+size_t CalcBufferSize(VideoType type, int width, int height);
 //
 //// Extract buffer from VideoFrame or I420BufferInterface (consecutive
 //// planes, no stride)

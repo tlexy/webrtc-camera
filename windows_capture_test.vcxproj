@@ -148,6 +148,7 @@
     <ClCompile Include="core\video_capture_factory.cc" />
     <ClCompile Include="core\video_capture_impl.cc" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="vcm_capturer.cc" />
     <ClCompile Include="video_frame\color_space.cc" />
     <ClCompile Include="video_frame\hdr_metadata.cc" />
     <ClCompile Include="windows\device_info_ds.cc" />
@@ -173,6 +174,7 @@
     <ClInclude Include="core\video_capture_defines.h" />
     <ClInclude Include="core\video_capture_factory.h" />
     <ClInclude Include="core\video_capture_impl.h" />
+    <ClInclude Include="vcm_capturer.h" />
     <ClInclude Include="video_frame\color_space.h" />
     <ClInclude Include="video_frame\hdr_metadata.h" />
     <ClInclude Include="video_frame\video_rotation.h" />

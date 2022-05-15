@@ -9,7 +9,7 @@
  */
 
 #include "video_capture_impl.h"
-
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 
@@ -123,31 +123,31 @@ int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
   const int32_t height = frameInfo.height;
 
   //TRACE_EVENT1("webrtc", "VC::IncomingFrame", "capture_time", captureTime);
+  
+   //Not encoded, convert to I420.
+  if (frameInfo.videoType != VideoType::kMJPEG &&
+      CalcBufferSize(frameInfo.videoType, width, abs(height)) !=
+          videoFrameLength) {
+      std::cout << "IncomingFrame, error 1" << std::endl;
+    return -1;
+  }
 
-  // Not encoded, convert to I420.
-  //if (frameInfo.videoType != VideoType::kMJPEG &&
-  //    CalcBufferSize(frameInfo.videoType, width, abs(height)) !=
-  //        videoFrameLength) {
+  int stride_y = width;
+  int stride_uv = (width + 1) / 2;
+  int target_width = width;
+  int target_height = abs(height);
+  std::cout << "IncomingFrame, width=" << width << ",height=" << height << ",target_height=" << target_height << ",len=" << videoFrameLength << std::endl;
+  // SetApplyRotation doesn't take any lock. Make a local copy here.
+  bool apply_rotation = apply_rotation_;
 
-  //  return -1;
-  //}
-
-  //int stride_y = width;
-  //int stride_uv = (width + 1) / 2;
-  //int target_width = width;
-  //int target_height = abs(height);
-
-  //// SetApplyRotation doesn't take any lock. Make a local copy here.
-  //bool apply_rotation = apply_rotation_;
-
-  //if (apply_rotation) {
-  //  // Rotating resolution when for 90/270 degree rotations.
-  //  if (_rotateFrame == kVideoRotation_90 ||
-  //      _rotateFrame == kVideoRotation_270) {
-  //    target_width = abs(height);
-  //    target_height = width;
-  //  }
-  //}
+  if (apply_rotation) {
+    // Rotating resolution when for 90/270 degree rotations.
+    if (_rotateFrame == kVideoRotation_90 ||
+        _rotateFrame == kVideoRotation_270) {
+      target_width = abs(height);
+      target_height = width;
+    }
+  }
 
   //// Setting absolute height (in case it was negative).
   //// In Windows, the image starts bottom left, instead of top left.
