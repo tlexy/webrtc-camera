@@ -46,6 +46,7 @@ class VideoCaptureDS : public VideoCaptureImpl {
 
   bool CaptureStarted() override;
   int32_t CaptureSettings(VideoCaptureCapability& settings) override;
+  int32_t CurrentRealSettings(VideoCaptureCapability& settings) override;
 
  protected:
   ~VideoCaptureDS() override;
@@ -64,6 +65,7 @@ class VideoCaptureDS : public VideoCaptureImpl {
   rtc::scoped_refptr<CaptureSinkFilter> sink_filter_;
   IPin* _inputSendPin;
   IPin* _outputCapturePin;
+  VideoCaptureCapability _real_capability;
 
   // Microsoft DV interface (external DV cameras)
   IBaseFilter* _dvFilter;

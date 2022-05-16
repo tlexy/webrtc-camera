@@ -173,6 +173,12 @@ int32_t VideoCaptureDS::CaptureSettings(VideoCaptureCapability& settings) {
   return 0;
 }
 
+int32_t VideoCaptureDS::CurrentRealSettings(VideoCaptureCapability& settings)
+{
+    settings = _real_capability;
+    return 0;
+}
+
 int32_t VideoCaptureDS::SetCameraOutput(
     const VideoCaptureCapability& requestedCapability) {
   // Get the best matching capability
@@ -199,6 +205,10 @@ int32_t VideoCaptureDS::SetCameraOutput(
   if (_dsInfo.GetWindowsCapability(capabilityIndex, windowsCapability) != 0) {
     return -1;
   }
+  _real_capability.height = windowsCapability.height;
+  _real_capability.width = windowsCapability.width;
+  _real_capability.maxFPS = windowsCapability.maxFPS;
+  _real_capability.videoType = windowsCapability.videoType;
 
   IAMStreamConfig* streamConfig = NULL;
   AM_MEDIA_TYPE* pmt = NULL;

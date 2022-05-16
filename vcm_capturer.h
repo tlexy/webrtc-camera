@@ -43,6 +43,9 @@ class VcmCapturer : public rtc::VideoSinkInterface<VideoFrame> {
 
   void OnFrame(const VideoFrame& frame) override;
 
+  int RealWidth();
+  int RealHeight();
+
  private:
   VcmCapturer();
   bool Init(size_t width,
@@ -60,6 +63,7 @@ class VcmCapturer : public rtc::VideoSinkInterface<VideoFrame> {
   bool _is_stop{ true };
   /////////////////////NOTICE: 这里对_subs的操作并没有加锁
   std::vector<std::shared_ptr<VideoFrameSubscriber>> _subs;
+  webrtc::VideoCaptureCapability _real_cap;
 };
 
 }  // namespace test

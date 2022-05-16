@@ -95,6 +95,7 @@ class VideoCaptureModule : public rtc::RefCountInterface {
 
   // Gets the current configuration.
   virtual int32_t CaptureSettings(VideoCaptureCapability& settings) = 0;
+  virtual int32_t CurrentRealSettings(VideoCaptureCapability& settings) = 0;
 
   // Set the rotation of the captured frames.
   // If the rotation is set to the same as returned by

@@ -68,7 +68,8 @@ bool VcmCapturer::StartCapture()
         Destroy();
         return false;
     }
-
+    _real_cap;
+    vcm_->CurrentRealSettings(_real_cap);
     if (!_th)
     {
         _th = std::make_shared<std::thread>(&VcmCapturer::broadcaster_thread, this);
@@ -77,6 +78,16 @@ bool VcmCapturer::StartCapture()
 
     RTC_CHECK(vcm_->CaptureStarted());
     return true;
+}
+
+int VcmCapturer::RealWidth()
+{
+    return _real_cap.width;
+}
+
+int VcmCapturer::RealHeight()
+{
+    return _real_cap.height;
 }
 
 VcmCapturer* VcmCapturer::Create(size_t width,

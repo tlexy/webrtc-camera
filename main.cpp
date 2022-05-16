@@ -2,9 +2,12 @@
 #include "core/video_capture.h"
 #include "core/video_capture_factory.h"
 #include "vcm_capturer.h"
+#include "test/sdl_player.h"
 
 #pragma comment(lib, "strmiids.lib")
 #pragma comment(lib, "Winmm.lib")
+
+#undef main
 
 int main()
 {
@@ -16,9 +19,19 @@ int main()
     int num_devices = info->NumberOfDevices();
     std::cout << "nums of device: " << num_devices << std::endl;
 
-    auto capturer = webrtc::test::VcmCapturer::Create(640, 480, 30, 0);
+    auto player = std::make_shared<SdlPlayer>();
+
+    int height = 640;
+    int width = 480;
+    auto capturer = webrtc::test::VcmCapturer::Create(width, height, 30, 0);
+
+    capturer->AddSubscriber(player);
+
     capturer->StartCapture();
 
+    player->start(capturer->RealWidth(), capturer->RealHeight());
+
     std::cin.get();
+    player->stop();
 	return 0;
 }

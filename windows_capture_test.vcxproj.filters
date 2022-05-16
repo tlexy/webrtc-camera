@@ -19,6 +19,9 @@
     <Filter Include="video_frame">
       <UniqueIdentifier>{93781a92-b688-46f4-8cf5-ce681431181a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{0b2226f9-bdec-4caf-911d-fd5ec9150c5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,6 +92,9 @@
     </ClCompile>
     <ClCompile Include="video_frame_subscriber.cc">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="test\sdl_player.cpp">
+      <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="video_frame_subscriber.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="test\sdl_player.h">
+      <Filter>test</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
