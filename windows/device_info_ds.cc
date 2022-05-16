@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -16,6 +16,8 @@
 #include "help_functions_ds.h"
 #include "common/string_utils.h"
 #include "common/rtc_log.h"
+
+#pragma execution_character_set("utf-8")
 
 namespace webrtc {
 namespace videocapturemodule {

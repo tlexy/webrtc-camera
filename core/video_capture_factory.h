@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -17,6 +17,8 @@
 #include "common/scoped_refptr.h"
 #include "video_capture.h"
 #include "video_capture_defines.h"
+
+#pragma execution_character_set("utf-8")
 
 namespace webrtc {
 

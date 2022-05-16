@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include "common/string_utils.h"
 #include "common/webrtc_libyuv.h"
+
+#pragma execution_character_set("utf-8")
 
 #ifndef abs
 #define abs(a) (a >= 0 ? a : -a)

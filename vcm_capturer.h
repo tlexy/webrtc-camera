@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -18,6 +18,8 @@
 #include "video_frame/video_frame.h"
 #include "video_frame/video_sink_interface.h"
 
+#pragma execution_character_set("utf-8")
+
 namespace webrtc {
 namespace test {
 
@@ -28,6 +30,8 @@ class VcmCapturer : public rtc::VideoSinkInterface<VideoFrame> {
                              size_t target_fps,
                              size_t capture_device_index);
   virtual ~VcmCapturer();
+
+  bool StartCapture();
 
   void OnFrame(const VideoFrame& frame) override;
 

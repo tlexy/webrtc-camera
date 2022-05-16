@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -21,6 +21,8 @@
 #include <mutex>
 //#include "rtc_base/synchronization/mutex.h"
 //#include "rtc_base/thread_annotations.h"
+
+#pragma execution_character_set("utf-8")
 
 namespace webrtc {
 namespace videocapturemodule {

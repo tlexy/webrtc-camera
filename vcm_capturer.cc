@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Copyright (c) 2013 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -13,6 +13,8 @@
 #include <memory>
 #include "core/video_capture_factory.h"
 #include "common/rtc_log.h"
+
+#pragma execution_character_set("utf-8")
 
 namespace webrtc {
 namespace test {
@@ -47,15 +49,26 @@ bool VcmCapturer::Init(size_t width,
   capability_.height = static_cast<int32_t>(height);
   capability_.maxFPS = static_cast<int32_t>(target_fps);
   capability_.videoType = VideoType::kI420;
-
-  if (vcm_->StartCapture(capability_) != 0) {
+  
+  /*if (vcm_->StartCapture(capability_) != 0) {
     Destroy();
     return false;
   }
 
-  RTC_CHECK(vcm_->CaptureStarted());
+  RTC_CHECK(vcm_->CaptureStarted());*/
 
   return true;
+}
+
+bool VcmCapturer::StartCapture()
+{
+    if (vcm_->StartCapture(capability_) != 0) {
+        Destroy();
+        return false;
+    }
+
+    RTC_CHECK(vcm_->CaptureStarted());
+    return true;
 }
 
 VcmCapturer* VcmCapturer::Create(size_t width,

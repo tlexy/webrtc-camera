@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -21,6 +21,8 @@
 #include "common/time_utils.h"
 //#include "rtc_base/trace_event.h"
 #include "3rd/libyuv/include/libyuv.h"
+
+#pragma execution_character_set("utf-8")
 
 namespace webrtc {
 namespace videocapturemodule {
