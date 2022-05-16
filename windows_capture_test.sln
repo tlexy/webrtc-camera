@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.32126.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "windows_capture_test", "windows_capture_test.vcxproj", "{1F8339F3-6D3C-4448-9E03-8B2774ECE2E8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5DAF2744-064E-3C66-A13C-622C1D7492AC} = {5DAF2744-064E-3C66-A13C-622C1D7492AC}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yuv", "3rd\libyuv\build\yuv.vcxproj", "{5DAF2744-064E-3C66-A13C-622C1D7492AC}"
 EndProject

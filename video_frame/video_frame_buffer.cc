@@ -10,9 +10,10 @@
 
 #include "video_frame_buffer.h"
 
-#include "api/video/i420_buffer.h"
-#include "api/video/i444_buffer.h"
-#include "api/video/nv12_buffer.h"
+#include "i420_buffer.h"
+#include "common/rtc_log.h"
+#include "i444_buffer.h"
+#include "nv12_buffer.h"
 
 namespace webrtc {
 
@@ -56,11 +57,11 @@ const NV12BufferInterface* VideoFrameBuffer::GetNV12() const {
   return static_cast<const NV12BufferInterface*>(this);
 }
 
-rtc::scoped_refptr<VideoFrameBuffer> VideoFrameBuffer::GetMappedFrameBuffer(
-    rtc::ArrayView<Type> types) {
-  RTC_CHECK(type() == Type::kNative);
-  return nullptr;
-}
+//rtc::scoped_refptr<VideoFrameBuffer> VideoFrameBuffer::GetMappedFrameBuffer(
+//    rtc::ArrayView<Type> types) {
+//  RTC_CHECK(type() == Type::kNative);
+//  return nullptr;
+//}
 
 VideoFrameBuffer::Type I420BufferInterface::type() const {
   return Type::kI420;

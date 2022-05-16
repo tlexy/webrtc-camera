@@ -112,8 +112,8 @@ class VideoFrameBuffer : public rtc::RefCountInterface {
   // conversion for encoding with a software encoder. Returns nullptr if the
   // frame type is not supported, mapping is not possible, or if the kNative
   // frame has not implemented this method. Only callable if type() is kNative.
-  virtual rtc::scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
-      rtc::ArrayView<Type> types);
+  //virtual rtc::scoped_refptr<VideoFrameBuffer> GetMappedFrameBuffer(
+  //    rtc::ArrayView<Type> types);
 
  protected:
   ~VideoFrameBuffer() override {}

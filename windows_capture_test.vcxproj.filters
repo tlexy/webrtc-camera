@@ -69,6 +69,21 @@
     <ClCompile Include="vcm_capturer.cc">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="video_frame\i420_buffer.cc">
+      <Filter>video_frame</Filter>
+    </ClCompile>
+    <ClCompile Include="video_frame\video_frame_buffer.cc">
+      <Filter>video_frame</Filter>
+    </ClCompile>
+    <ClCompile Include="common\aligned_malloc.cc">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="video_frame\i444_buffer.cc">
+      <Filter>video_frame</Filter>
+    </ClCompile>
+    <ClCompile Include="video_frame\nv12_buffer.cc">
+      <Filter>video_frame</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\device_info_impl.h">
@@ -148,6 +163,21 @@
     </ClInclude>
     <ClInclude Include="vcm_capturer.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="video_frame\i420_buffer.h">
+      <Filter>video_frame</Filter>
+    </ClInclude>
+    <ClInclude Include="video_frame\video_frame_buffer.h">
+      <Filter>video_frame</Filter>
+    </ClInclude>
+    <ClInclude Include="common\aligned_malloc.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="video_frame\i444_buffer.h">
+      <Filter>video_frame</Filter>
+    </ClInclude>
+    <ClInclude Include="video_frame\nv12_buffer.h">
+      <Filter>video_frame</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
