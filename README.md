@@ -9,6 +9,12 @@
 * 具体使用见main.cpp
 * 持续更新中，目前默认使用第0号摄像头进行采集
 
+### 编译libjpeg-turbo以支持部分设备输出的jpeg格式数据
+1. 解压libjpeg-turbo-2.1.3.zip到当前文件夹
+2. 进入目录libjpeg-turbo-2.1.3并新建build文件夹
+3. 进入build文件夹，打开powershell或者cmd，执行cmake -G "Visual Studio 16 2019" ..
+4. 打开生成的libjpeg-turbo.sln，生成整个解决方案
+5. 根据自身的路径对windows_capture_test进行配置，当前的配置是使用turbojpeg-static.lib
+
 ### Todo List
-* 高分辨率下部分摄像头会有问题
-* 摄像头输出kMJPEG格式时会有问题
+* 获取设备的名字
