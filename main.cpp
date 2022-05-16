@@ -17,6 +17,7 @@ int main()
     std::cout << "nums of device: " << num_devices << std::endl;
 
     auto capturer = webrtc::test::VcmCapturer::Create(640, 480, 30, 0);
+    capturer->StartCapture();
 
     std::cin.get();
 	return 0;

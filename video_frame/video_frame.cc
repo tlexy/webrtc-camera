@@ -279,7 +279,9 @@ VideoFrame::VideoFrame(uint16_t id,
 }
 
 VideoFrame::~VideoFrame() = default;
-
+VideoFrame::VideoFrame()
+    :id_(0)
+{}
 VideoFrame::VideoFrame(const VideoFrame&) = default;
 VideoFrame::VideoFrame(VideoFrame&&) = default;
 VideoFrame& VideoFrame::operator=(const VideoFrame&) = default;

@@ -116,7 +116,7 @@ class VideoFrame {
              VideoRotation rotation);
 
   ~VideoFrame();
-
+  VideoFrame();
   // Support move and copy.
   VideoFrame(const VideoFrame&);
   VideoFrame(VideoFrame&&);

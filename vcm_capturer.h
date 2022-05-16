@@ -17,11 +17,17 @@
 #include "core/video_capture.h"
 #include "video_frame/video_frame.h"
 #include "video_frame/video_sink_interface.h"
+#include "common/threadqueue.hpp"
+#include <thread>
+#include <memory>
+#include <vector>
 
 #pragma execution_character_set("utf-8")
 
 namespace webrtc {
 namespace test {
+
+class VideoFrameSubscriber;
 
 class VcmCapturer : public rtc::VideoSinkInterface<VideoFrame> {
  public:
@@ -32,6 +38,8 @@ class VcmCapturer : public rtc::VideoSinkInterface<VideoFrame> {
   virtual ~VcmCapturer();
 
   bool StartCapture();
+  void AddSubscriber(std::shared_ptr<VideoFrameSubscriber>);
+  void DelSubscriber(std::shared_ptr<VideoFrameSubscriber>);
 
   void OnFrame(const VideoFrame& frame) override;
 
@@ -43,8 +51,15 @@ class VcmCapturer : public rtc::VideoSinkInterface<VideoFrame> {
             size_t capture_device_index);
   void Destroy();
 
+  void broadcaster_thread();
+
   rtc::scoped_refptr<VideoCaptureModule> vcm_;
   VideoCaptureCapability capability_;
+  ThreadQueue<VideoFrame> _qu;
+  std::shared_ptr<std::thread> _th{nullptr};
+  bool _is_stop{ true };
+  /////////////////////NOTICE: 这里对_subs的操作并没有加锁
+  std::vector<std::shared_ptr<VideoFrameSubscriber>> _subs;
 };
 
 }  // namespace test

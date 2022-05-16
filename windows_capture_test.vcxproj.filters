@@ -87,6 +87,9 @@
     <ClCompile Include="video_frame\video_frame.cc">
       <Filter>video_frame</Filter>
     </ClCompile>
+    <ClCompile Include="video_frame_subscriber.cc">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\device_info_impl.h">
@@ -184,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="video_frame\video_frame.h">
       <Filter>video_frame</Filter>
+    </ClInclude>
+    <ClInclude Include="common\threadqueue.hpp">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="video_frame_subscriber.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,6 +13,8 @@
 #include <memory>
 #include "core/video_capture_factory.h"
 #include "common/rtc_log.h"
+#include "video_frame_subscriber.h"
+#include "video_frame_subscriber.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -67,6 +69,12 @@ bool VcmCapturer::StartCapture()
         return false;
     }
 
+    if (!_th)
+    {
+        _th = std::make_shared<std::thread>(&VcmCapturer::broadcaster_thread, this);
+        _is_stop = false;
+    }
+
     RTC_CHECK(vcm_->CaptureStarted());
     return true;
 }
@@ -89,6 +97,12 @@ void VcmCapturer::Destroy() {
   if (!vcm_)
     return;
 
+  _is_stop = true;
+  if (_th)
+  {
+      _th->join();
+      _th = nullptr;
+  }
   vcm_->StopCapture();
   vcm_->DeRegisterCaptureDataCallback();
   // Release reference to VCM.
@@ -99,9 +113,44 @@ VcmCapturer::~VcmCapturer() {
   Destroy();
 }
 
+void VcmCapturer::broadcaster_thread()
+{
+    bool flag = false;
+    while (!_is_stop)
+    {
+        VideoFrame frame = _qu.pop(flag, std::chrono::milliseconds(1000));
+        if (flag)
+        {
+            std::cout << "broadcaster_thread..." << std::endl;
+            for (int i = 0; i < _subs.size(); ++i)
+            {
+                _subs[i]->OnFrame(frame);
+            }
+        }
+    }
+}
+
+void VcmCapturer::AddSubscriber(std::shared_ptr<VideoFrameSubscriber> suber)
+{
+    _subs.push_back(suber);
+}
+
+void VcmCapturer::DelSubscriber(std::shared_ptr<VideoFrameSubscriber> suber)
+{
+    for (int i = 0; i < _subs.size(); ++i)
+    {
+        if (_subs[i]->SubsId() == suber->SubsId())
+        {
+            _subs.erase(_subs.begin() + i);
+            break;
+        }
+    }
+}
+
 void VcmCapturer::OnFrame(const VideoFrame& frame) {
   //TestVideoCapturer::OnFrame(frame);
     int a = 1;
+    _qu.push_back(frame);
 }
 
 }  // namespace test
