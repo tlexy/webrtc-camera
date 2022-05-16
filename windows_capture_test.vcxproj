@@ -159,6 +159,7 @@
     <ClCompile Include="video_frame\i420_buffer.cc" />
     <ClCompile Include="video_frame\i444_buffer.cc" />
     <ClCompile Include="video_frame\nv12_buffer.cc" />
+    <ClCompile Include="video_frame\video_frame.cc" />
     <ClCompile Include="video_frame\video_frame_buffer.cc" />
     <ClCompile Include="windows\device_info_ds.cc" />
     <ClCompile Include="windows\help_functions_ds.cc" />
@@ -190,6 +191,7 @@
     <ClInclude Include="video_frame\i420_buffer.h" />
     <ClInclude Include="video_frame\i444_buffer.h" />
     <ClInclude Include="video_frame\nv12_buffer.h" />
+    <ClInclude Include="video_frame\video_frame.h" />
     <ClInclude Include="video_frame\video_frame_buffer.h" />
     <ClInclude Include="video_frame\video_rotation.h" />
     <ClInclude Include="video_frame\video_sink_interface.h" />

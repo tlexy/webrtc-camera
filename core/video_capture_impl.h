@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 #include "common/scoped_refptr.h"
-//#include "video_frame/video_frame.h"
+#include "video_frame/video_frame.h"
 #include "video_frame/video_rotation.h"
 #include "video_frame/video_sink_interface.h"
 #include "video_capture.h"
@@ -51,8 +51,8 @@ class VideoCaptureImpl : public VideoCaptureModule {
   static int32_t RotationInDegrees(VideoRotation rotation, int* degrees);
 
   // Call backs
-  /*void RegisterCaptureDataCallback(
-      rtc::VideoSinkInterface<VideoFrame>* dataCallback) override;*/
+  void RegisterCaptureDataCallback(
+      rtc::VideoSinkInterface<VideoFrame>* dataCallback) override;
   void DeRegisterCaptureDataCallback() override;
 
   int32_t SetCaptureRotation(VideoRotation rotation) override;
@@ -85,14 +85,14 @@ class VideoCaptureImpl : public VideoCaptureModule {
  private:
   void UpdateFrameCount();
   uint32_t CalculateFrameRate(int64_t now_ns);
-  /*int32_t DeliverCapturedFrame(VideoFrame& captureFrame);*/
+  int32_t DeliverCapturedFrame(VideoFrame& captureFrame);
 
   // last time the module process function was called.
   int64_t _lastProcessTimeNanos;
   // last time the frame rate callback function was called.
   int64_t _lastFrameRateCallbackTimeNanos;
 
-  /*rtc::VideoSinkInterface<VideoFrame>* _dataCallBack;*/
+  rtc::VideoSinkInterface<VideoFrame>* _dataCallBack;
 
   int64_t _lastProcessFrameTimeNanos;
   // timestamp for local captured frames

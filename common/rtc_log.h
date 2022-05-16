@@ -10,6 +10,7 @@
 #define RTC_DCHECK_EQ(a, b) assert((a) == (b))
 #define RTC_DCHECK_GT(a, b) assert((a) > (b))
 #define RTC_DCHECK_GE(a, b) assert((a) >= (b))
+#define RTC_DCHECK_LE(a, b) assert((a) <= (b))
 #define RTC_CHECK_EQ(a, b)
 #define RTC_CHECK_LE(a, b)
 #define RTC_CHECK_GE(a, b)

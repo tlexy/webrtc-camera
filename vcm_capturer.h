@@ -15,13 +15,13 @@
 
 #include "common/scoped_refptr.h"
 #include "core/video_capture.h"
-//#include "test_video_capturer.h"
+#include "video_frame/video_frame.h"
 #include "video_frame/video_sink_interface.h"
 
 namespace webrtc {
 namespace test {
 
-class VcmCapturer/* : public rtc::VideoSinkInterface<VideoFrame> */{
+class VcmCapturer : public rtc::VideoSinkInterface<VideoFrame> {
  public:
   static VcmCapturer* Create(size_t width,
                              size_t height,
@@ -29,7 +29,7 @@ class VcmCapturer/* : public rtc::VideoSinkInterface<VideoFrame> */{
                              size_t capture_device_index);
   virtual ~VcmCapturer();
 
-  //void OnFrame(const VideoFrame& frame) override;
+  void OnFrame(const VideoFrame& frame) override;
 
  private:
   VcmCapturer();

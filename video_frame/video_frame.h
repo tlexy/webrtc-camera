@@ -32,10 +32,10 @@ class VideoFrame {
     int height;
 
     // Makes this UpdateRect a bounding box of this and other rect.
-    void Union(const UpdateRect& other);
+    //void Union(const UpdateRect& other);
 
     // Makes this UpdateRect an intersection of this and other rect.
-    void Intersect(const UpdateRect& other);
+    //void Intersect(const UpdateRect& other);
 
     // Sets everything to 0, making this UpdateRect a zero-size (empty) update.
     void MakeEmptyUpdate();
@@ -88,11 +88,11 @@ class VideoFrame {
     Builder& set_timestamp_rtp(uint32_t timestamp_rtp);
     Builder& set_ntp_time_ms(int64_t ntp_time_ms);
     Builder& set_rotation(VideoRotation rotation);
-    Builder& set_color_space(const absl::optional<ColorSpace>& color_space);
-    Builder& set_color_space(const ColorSpace* color_space);
+    //Builder& set_color_space(const absl::optional<ColorSpace>& color_space);
+    //Builder& set_color_space(const ColorSpace* color_space);
     Builder& set_id(uint16_t id);
-    Builder& set_update_rect(const absl::optional<UpdateRect>& update_rect);
-    Builder& set_packet_infos(RtpPacketInfos packet_infos);
+    //Builder& set_update_rect(const absl::optional<UpdateRect>& update_rect);
+    //Builder& set_packet_infos(RtpPacketInfos packet_infos);
 
    private:
     uint16_t id_ = 0;
@@ -101,9 +101,9 @@ class VideoFrame {
     uint32_t timestamp_rtp_ = 0;
     int64_t ntp_time_ms_ = 0;
     VideoRotation rotation_ = kVideoRotation_0;
-    absl::optional<ColorSpace> color_space_;
-    absl::optional<UpdateRect> update_rect_;
-    RtpPacketInfos packet_infos_;
+    //absl::optional<ColorSpace> color_space_;
+    //absl::optional<UpdateRect> update_rect_;
+    //RtpPacketInfos packet_infos_;
   };
 
   // To be deprecated. Migrate all use to Builder.
@@ -177,20 +177,21 @@ class VideoFrame {
   void set_rotation(VideoRotation rotation) { rotation_ = rotation; }
 
   // Get color space when available.
-  const absl::optional<ColorSpace>& color_space() const { return color_space_; }
-  void set_color_space(const absl::optional<ColorSpace>& color_space) {
-    color_space_ = color_space;
-  }
+  //const absl::optional<ColorSpace>& color_space() const { return color_space_; }
+  //void set_color_space(const absl::optional<ColorSpace>& color_space) {
+  //  color_space_ = color_space;
+  //}
 
   // max_composition_delay_in_frames() is used in an experiment of a low-latency
   // renderer algorithm see crbug.com/1138888.
-  absl::optional<int32_t> max_composition_delay_in_frames() const {
-    return max_composition_delay_in_frames_;
-  }
-  void set_max_composition_delay_in_frames(
-      absl::optional<int32_t> max_composition_delay_in_frames) {
-    max_composition_delay_in_frames_ = max_composition_delay_in_frames;
-  }
+  //absl::optional<int32_t> max_composition_delay_in_frames() const {
+  //  return max_composition_delay_in_frames_;
+  //}
+
+  //void set_max_composition_delay_in_frames(
+  //    absl::optional<int32_t> max_composition_delay_in_frames) {
+  //  max_composition_delay_in_frames_ = max_composition_delay_in_frames;
+  //}
 
   // Get render time in milliseconds.
   // TODO(nisse): Deprecated. Migrate all users to timestamp_us().
@@ -209,38 +210,39 @@ class VideoFrame {
     return video_frame_buffer()->type() == VideoFrameBuffer::Type::kNative;
   }
 
-  bool has_update_rect() const { return update_rect_.has_value(); }
+  //bool has_update_rect() const { return update_rect_.has_value(); }
 
-  // Returns update_rect set by the builder or set_update_rect() or whole frame
-  // rect if no update rect is available.
-  UpdateRect update_rect() const {
-    return update_rect_.value_or(UpdateRect{0, 0, width(), height()});
-  }
+  //// Returns update_rect set by the builder or set_update_rect() or whole frame
+  //// rect if no update rect is available.
+  //UpdateRect update_rect() const {
+  //  return update_rect_.value_or(UpdateRect{0, 0, width(), height()});
+  //}
 
-  // Rectangle must be within the frame dimensions.
-  void set_update_rect(const VideoFrame::UpdateRect& update_rect) {
-    RTC_DCHECK_GE(update_rect.offset_x, 0);
-    RTC_DCHECK_GE(update_rect.offset_y, 0);
-    RTC_DCHECK_LE(update_rect.offset_x + update_rect.width, width());
-    RTC_DCHECK_LE(update_rect.offset_y + update_rect.height, height());
-    update_rect_ = update_rect;
-  }
+  //// Rectangle must be within the frame dimensions.
+  //void set_update_rect(const VideoFrame::UpdateRect& update_rect) {
+  //  RTC_DCHECK_GE(update_rect.offset_x, 0);
+  //  RTC_DCHECK_GE(update_rect.offset_y, 0);
+  //  RTC_DCHECK_LE(update_rect.offset_x + update_rect.width, width());
+  //  RTC_DCHECK_LE(update_rect.offset_y + update_rect.height, height());
+  //  update_rect_ = update_rect;
+  //}
 
-  void clear_update_rect() { update_rect_ = absl::nullopt; }
+  //void clear_update_rect() { update_rect_ = absl::nullopt; }
 
-  // Get information about packets used to assemble this video frame. Might be
-  // empty if the information isn't available.
-  const RtpPacketInfos& packet_infos() const { return packet_infos_; }
-  void set_packet_infos(RtpPacketInfos value) {
-    packet_infos_ = std::move(value);
-  }
+  //// Get information about packets used to assemble this video frame. Might be
+  //// empty if the information isn't available.
+  //const RtpPacketInfos& packet_infos() const { return packet_infos_; }
+  //void set_packet_infos(RtpPacketInfos value) {
+  //  packet_infos_ = std::move(value);
+  //}
 
-  const absl::optional<ProcessingTime> processing_time() const {
-    return processing_time_;
-  }
-  void set_processing_time(const ProcessingTime& processing_time) {
-    processing_time_ = processing_time;
-  }
+  //const absl::optional<ProcessingTime> processing_time() const {
+  //  return processing_time_;
+  //}
+
+  //void set_processing_time(const ProcessingTime& processing_time) {
+  //  processing_time_ = processing_time;
+  //}
 
  private:
   VideoFrame(uint16_t id,
@@ -248,10 +250,10 @@ class VideoFrame {
              int64_t timestamp_us,
              uint32_t timestamp_rtp,
              int64_t ntp_time_ms,
-             VideoRotation rotation,
-             const absl::optional<ColorSpace>& color_space,
+             VideoRotation rotation
+             /*const absl::optional<ColorSpace>& color_space,
              const absl::optional<UpdateRect>& update_rect,
-             RtpPacketInfos packet_infos);
+             RtpPacketInfos packet_infos*/);
 
   uint16_t id_;
   // An opaque reference counted handle that stores the pixel data.
@@ -260,23 +262,23 @@ class VideoFrame {
   int64_t ntp_time_ms_;
   int64_t timestamp_us_;
   VideoRotation rotation_;
-  absl::optional<ColorSpace> color_space_;
-  absl::optional<int32_t> max_composition_delay_in_frames_;
+  /*absl::optional<ColorSpace> color_space_;
+  absl::optional<int32_t> max_composition_delay_in_frames_;*/
   // Updated since the last frame area. If present it means that the bounding
   // box of all the changes is within the rectangular area and is close to it.
   // If absent, it means that there's no information about the change at all and
   // update_rect() will return a rectangle corresponding to the entire frame.
-  absl::optional<UpdateRect> update_rect_;
+  //absl::optional<UpdateRect> update_rect_;
   // Information about packets used to assemble this video frame. This is needed
   // by `SourceTracker` when the frame is delivered to the RTCRtpReceiver's
   // MediaStreamTrack, in order to implement getContributingSources(). See:
   // https://w3c.github.io/webrtc-pc/#dom-rtcrtpreceiver-getcontributingsources
-  RtpPacketInfos packet_infos_;
+  //RtpPacketInfos packet_infos_;
   // Processing timestamps of the frame. For received video frames these are the
   // timestamps when the frame is sent to the decoder and the decoded image
   // returned from the decoder.
   // Currently, not set for locally captured video frames.
-  absl::optional<ProcessingTime> processing_time_;
+  //absl::optional<ProcessingTime> processing_time_;
 };
 
 }  // namespace webrtc

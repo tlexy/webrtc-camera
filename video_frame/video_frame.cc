@@ -8,49 +8,48 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "api/video/video_frame.h"
-
+#include "video_frame.h"
+#include "common/rtc_log.h"
 #include <algorithm>
 #include <utility>
 
-#include "rtc_base/checks.h"
-#include "rtc_base/time_utils.h"
+#include "common/time_utils.h"
 
 namespace webrtc {
 
-void VideoFrame::UpdateRect::Union(const UpdateRect& other) {
-  if (other.IsEmpty())
-    return;
-  if (IsEmpty()) {
-    *this = other;
-    return;
-  }
-  int right = std::max(offset_x + width, other.offset_x + other.width);
-  int bottom = std::max(offset_y + height, other.offset_y + other.height);
-  offset_x = std::min(offset_x, other.offset_x);
-  offset_y = std::min(offset_y, other.offset_y);
-  width = right - offset_x;
-  height = bottom - offset_y;
-  RTC_DCHECK_GT(width, 0);
-  RTC_DCHECK_GT(height, 0);
-}
-
-void VideoFrame::UpdateRect::Intersect(const UpdateRect& other) {
-  if (other.IsEmpty() || IsEmpty()) {
-    MakeEmptyUpdate();
-    return;
-  }
-
-  int right = std::min(offset_x + width, other.offset_x + other.width);
-  int bottom = std::min(offset_y + height, other.offset_y + other.height);
-  offset_x = std::max(offset_x, other.offset_x);
-  offset_y = std::max(offset_y, other.offset_y);
-  width = right - offset_x;
-  height = bottom - offset_y;
-  if (width <= 0 || height <= 0) {
-    MakeEmptyUpdate();
-  }
-}
+//void VideoFrame::UpdateRect::Union(const UpdateRect& other) {
+//  if (other.IsEmpty())
+//    return;
+//  if (IsEmpty()) {
+//    *this = other;
+//    return;
+//  }
+//  int right = std::max(offset_x + width, other.offset_x + other.width);
+//  int bottom = std::max(offset_y + height, other.offset_y + other.height);
+//  offset_x = std::min(offset_x, other.offset_x);
+//  offset_y = std::min(offset_y, other.offset_y);
+//  width = right - offset_x;
+//  height = bottom - offset_y;
+//  RTC_DCHECK_GT(width, 0);
+//  RTC_DCHECK_GT(height, 0);
+//}
+//
+//void VideoFrame::UpdateRect::Intersect(const UpdateRect& other) {
+//  if (other.IsEmpty() || IsEmpty()) {
+//    MakeEmptyUpdate();
+//    return;
+//  }
+//
+//  int right = std::min(offset_x + width, other.offset_x + other.width);
+//  int bottom = std::min(offset_y + height, other.offset_y + other.height);
+//  offset_x = std::max(offset_x, other.offset_x);
+//  offset_y = std::max(offset_y, other.offset_y);
+//  width = right - offset_x;
+//  height = bottom - offset_y;
+//  if (width <= 0 || height <= 0) {
+//    MakeEmptyUpdate();
+//  }
+//}
 
 void VideoFrame::UpdateRect::MakeEmptyUpdate() {
   width = height = offset_x = offset_y = 0;
@@ -164,8 +163,8 @@ VideoFrame::Builder::~Builder() = default;
 VideoFrame VideoFrame::Builder::build() {
   RTC_CHECK(video_frame_buffer_ != nullptr);
   return VideoFrame(id_, video_frame_buffer_, timestamp_us_, timestamp_rtp_,
-                    ntp_time_ms_, rotation_, color_space_, update_rect_,
-                    packet_infos_);
+                    ntp_time_ms_, rotation_/*, color_space_, update_rect_,
+                    packet_infos_*/);
 }
 
 VideoFrame::Builder& VideoFrame::Builder::set_video_frame_buffer(
@@ -202,35 +201,35 @@ VideoFrame::Builder& VideoFrame::Builder::set_rotation(VideoRotation rotation) {
   return *this;
 }
 
-VideoFrame::Builder& VideoFrame::Builder::set_color_space(
-    const absl::optional<ColorSpace>& color_space) {
-  color_space_ = color_space;
-  return *this;
-}
-
-VideoFrame::Builder& VideoFrame::Builder::set_color_space(
-    const ColorSpace* color_space) {
-  color_space_ =
-      color_space ? absl::make_optional(*color_space) : absl::nullopt;
-  return *this;
-}
+//VideoFrame::Builder& VideoFrame::Builder::set_color_space(
+//    const absl::optional<ColorSpace>& color_space) {
+//  color_space_ = color_space;
+//  return *this;
+//}
+//
+//VideoFrame::Builder& VideoFrame::Builder::set_color_space(
+//    const ColorSpace* color_space) {
+//  color_space_ =
+//      color_space ? absl::make_optional(*color_space) : absl::nullopt;
+//  return *this;
+//}
 
 VideoFrame::Builder& VideoFrame::Builder::set_id(uint16_t id) {
   id_ = id;
   return *this;
 }
 
-VideoFrame::Builder& VideoFrame::Builder::set_update_rect(
-    const absl::optional<VideoFrame::UpdateRect>& update_rect) {
-  update_rect_ = update_rect;
-  return *this;
-}
-
-VideoFrame::Builder& VideoFrame::Builder::set_packet_infos(
-    RtpPacketInfos packet_infos) {
-  packet_infos_ = std::move(packet_infos);
-  return *this;
-}
+//VideoFrame::Builder& VideoFrame::Builder::set_update_rect(
+//    const absl::optional<VideoFrame::UpdateRect>& update_rect) {
+//  update_rect_ = update_rect;
+//  return *this;
+//}
+//
+//VideoFrame::Builder& VideoFrame::Builder::set_packet_infos(
+//    RtpPacketInfos packet_infos) {
+//  packet_infos_ = std::move(packet_infos);
+//  return *this;
+//}
 
 VideoFrame::VideoFrame(const rtc::scoped_refptr<VideoFrameBuffer>& buffer,
                        webrtc::VideoRotation rotation,
@@ -258,25 +257,25 @@ VideoFrame::VideoFrame(uint16_t id,
                        int64_t timestamp_us,
                        uint32_t timestamp_rtp,
                        int64_t ntp_time_ms,
-                       VideoRotation rotation,
+                       VideoRotation rotation/*,
                        const absl::optional<ColorSpace>& color_space,
                        const absl::optional<UpdateRect>& update_rect,
-                       RtpPacketInfos packet_infos)
+                       RtpPacketInfos packet_infos*/)
     : id_(id),
       video_frame_buffer_(buffer),
       timestamp_rtp_(timestamp_rtp),
       ntp_time_ms_(ntp_time_ms),
       timestamp_us_(timestamp_us),
-      rotation_(rotation),
+      rotation_(rotation)/*,
       color_space_(color_space),
       update_rect_(update_rect),
-      packet_infos_(std::move(packet_infos)) {
-  if (update_rect_) {
-    RTC_DCHECK_GE(update_rect_->offset_x, 0);
-    RTC_DCHECK_GE(update_rect_->offset_y, 0);
-    RTC_DCHECK_LE(update_rect_->offset_x + update_rect_->width, width());
-    RTC_DCHECK_LE(update_rect_->offset_y + update_rect_->height, height());
-  }
+      packet_infos_(std::move(packet_infos)) */{
+  //if (update_rect_) {
+  //  RTC_DCHECK_GE(update_rect_->offset_x, 0);
+  //  RTC_DCHECK_GE(update_rect_->offset_y, 0);
+  //  RTC_DCHECK_LE(update_rect_->offset_x + update_rect_->width, width());
+  //  RTC_DCHECK_LE(update_rect_->offset_y + update_rect_->height, height());
+  //}
 }
 
 VideoFrame::~VideoFrame() = default;

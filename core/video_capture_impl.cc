@@ -12,7 +12,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
-
+#include "common/rtc_log.h"
 #include "video_frame/i420_buffer.h"
 #include "video_frame/video_frame_buffer.h"
 #include "common/webrtc_libyuv.h"
@@ -93,25 +93,25 @@ VideoCaptureImpl::~VideoCaptureImpl() {
     delete[] _deviceUniqueId;
 }
 
-//void VideoCaptureImpl::RegisterCaptureDataCallback(
-//    rtc::VideoSinkInterface<VideoFrame>* dataCallBack) {
-//  std::lock_guard<std::mutex> lock(&api_lock_);
-//  _dataCallBack = dataCallBack;
-//}
-//
+void VideoCaptureImpl::RegisterCaptureDataCallback(
+    rtc::VideoSinkInterface<VideoFrame>* dataCallBack) {
+  std::lock_guard<std::mutex> lock(api_lock_);
+  _dataCallBack = dataCallBack;
+}
+
 void VideoCaptureImpl::DeRegisterCaptureDataCallback() {
     std::lock_guard<std::mutex> lock(api_lock_);
-  //_dataCallBack = NULL;
+  _dataCallBack = NULL;
 }
-//int32_t VideoCaptureImpl::DeliverCapturedFrame(VideoFrame& captureFrame) {
-//  UpdateFrameCount();  // frame count used for local frame rate callback.
-//
-//  if (_dataCallBack) {
-//    _dataCallBack->OnFrame(captureFrame);
-//  }
-//
-//  return 0;
-//}
+int32_t VideoCaptureImpl::DeliverCapturedFrame(VideoFrame& captureFrame) {
+  UpdateFrameCount();  // frame count used for local frame rate callback.
+
+  if (_dataCallBack) {
+    _dataCallBack->OnFrame(captureFrame);
+  }
+
+  return 0;
+}
 
 int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
                                         size_t videoFrameLength,
@@ -175,29 +175,29 @@ int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
     }
   }
 
-  //const int conversionResult = libyuv::ConvertToI420(
-  //    videoFrame, videoFrameLength, buffer.get()->MutableDataY(),
-  //    buffer.get()->StrideY(), buffer.get()->MutableDataU(),
-  //    buffer.get()->StrideU(), buffer.get()->MutableDataV(),
-  //    buffer.get()->StrideV(), 0, 0,  // No Cropping
-  //    width, height, target_width, target_height, rotation_mode,
-  //    ConvertVideoType(frameInfo.videoType));
-  //if (conversionResult < 0) {
-  //  RTC_LOG(LS_ERROR) << "Failed to convert capture frame from type "
-  //                    << static_cast<int>(frameInfo.videoType) << "to I420.";
-  //  return -1;
-  //}
+  const int conversionResult = libyuv::ConvertToI420(
+      videoFrame, videoFrameLength, buffer.get()->MutableDataY(),
+      buffer.get()->StrideY(), buffer.get()->MutableDataU(),
+      buffer.get()->StrideU(), buffer.get()->MutableDataV(),
+      buffer.get()->StrideV(), 0, 0,  // No Cropping
+      width, height, target_width, target_height, rotation_mode,
+      ConvertVideoType(frameInfo.videoType));
+  if (conversionResult < 0) {
+    RTC_LOG(LS_ERROR) << "Failed to convert capture frame from type "
+                      << static_cast<int>(frameInfo.videoType) << "to I420.";
+    return -1;
+  }
 
-  //VideoFrame captureFrame =
-  //    VideoFrame::Builder()
-  //        .set_video_frame_buffer(buffer)
-  //        .set_timestamp_rtp(0)
-  //        .set_timestamp_ms(rtc::TimeMillis())
-  //        .set_rotation(!apply_rotation ? _rotateFrame : kVideoRotation_0)
-  //        .build();
-  //captureFrame.set_ntp_time_ms(captureTime);
+  VideoFrame captureFrame =
+      VideoFrame::Builder()
+          .set_video_frame_buffer(buffer)
+          .set_timestamp_rtp(0)
+          .set_timestamp_ms(rtc::TimeMillis())
+          .set_rotation(!apply_rotation ? _rotateFrame : kVideoRotation_0)
+          .build();
+  captureFrame.set_ntp_time_ms(captureTime);
 
-  //DeliverCapturedFrame(captureFrame);
+  DeliverCapturedFrame(captureFrame);
 
   return 0;
 }

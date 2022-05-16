@@ -39,7 +39,7 @@ bool VcmCapturer::Init(size_t width,
   if (!vcm_) {
     return false;
   }
-  //vcm_->RegisterCaptureDataCallback(this);
+  vcm_->RegisterCaptureDataCallback(this);
 
   device_info->GetCapability(vcm_->CurrentDeviceName(), 0, capability_);
 
@@ -86,9 +86,10 @@ VcmCapturer::~VcmCapturer() {
   Destroy();
 }
 
-//void VcmCapturer::OnFrame(const VideoFrame& frame) {
-//  TestVideoCapturer::OnFrame(frame);
-//}
+void VcmCapturer::OnFrame(const VideoFrame& frame) {
+  //TestVideoCapturer::OnFrame(frame);
+    int a = 1;
+}
 
 }  // namespace test
 }  // namespace webrtc

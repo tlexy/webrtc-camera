@@ -15,6 +15,7 @@
 #include "video_frame/video_sink_interface.h"
 #include "video_capture_defines.h"
 #include "common/ref_count.h"
+#include "video_frame/video_frame.h"
 
 namespace webrtc {
 
@@ -73,8 +74,8 @@ class VideoCaptureModule : public rtc::RefCountInterface {
   };
 
   //   Register capture data callback
-  //virtual void RegisterCaptureDataCallback(
-  //    rtc::VideoSinkInterface<VideoFrame>* dataCallback) = 0;
+  virtual void RegisterCaptureDataCallback(
+      rtc::VideoSinkInterface<VideoFrame>* dataCallback) = 0;
 
   //  Remove capture data callback
   virtual void DeRegisterCaptureDataCallback() = 0;
