@@ -1,11 +1,6 @@
 #include "x264_encoder.h"
 #include "video_frame/video_frame_buffer.h"
 #include "video_frame/i420_buffer.h"
-extern "C"
-{
-#include "x264.h"
-#include "x264_config.h"
-}
 
 X264Encoder::X264Encoder()
 	:webrtc::test::VideoFrameSubscriber()
@@ -22,14 +17,12 @@ void X264Encoder::init(int width, int height, int fps)
 	_height = height;
 	_fps = fps;
 
-	x264_param_t mParam;
-	x264_param_default(&mParam);
+	/*x264_param_t mParam;
+	x264_param_default(&mParam);*/
 
 	int iNal = 0;
 	x264_nal_t* pNals = NULL;
 	x264_t* pHandle = NULL;
-	x264_picture_t* pPic_in = (x264_picture_t*)malloc(sizeof(x264_picture_t));
-	x264_picture_t* pPic_out = (x264_picture_t*)malloc(sizeof(x264_picture_t));
 	x264_param_t* pParam = (x264_param_t*)malloc(sizeof(x264_param_t));
 	x264_param_default(pParam);   //给参数结构体赋默认值
 	//设置preset和tune
@@ -51,10 +44,8 @@ void X264Encoder::init(int width, int height, int fps)
 
 	//open encoder
 	pHandle = x264_encoder_open(pParam);
-
-	x264_picture_init(pPic_out);//out.picture
-	//I420,yuv420p
-	x264_picture_alloc(pPic_in, X264_CSP_I420, pParam->i_width, pParam->i_height);
+	_handle = pHandle;
+	_param = pParam;
 }
 
 void X264Encoder::start()
@@ -78,17 +69,28 @@ void X264Encoder::stop()
 
 void X264Encoder::encode_thread()
 {
-	  while (!_is_stop) 
-	  {
-
-		  webrtc::VideoFrame frame = _qu.pop(flag, std::chrono::milliseconds(100));
-		  if (flag)
-		  {
-			  SDL_UpdateYUVTexture(texture, NULL,
-				  frame.video_frame_buffer()->GetI420()->DataY(), frame.video_frame_buffer()->GetI420()->StrideY(),
-				  frame.video_frame_buffer()->GetI420()->DataU(), frame.video_frame_buffer()->GetI420()->StrideU(),
-				  frame.video_frame_buffer()->GetI420()->DataV(), frame.video_frame_buffer()->GetI420()->StrideV());
-
-		  }
-	  }
+	x264_picture_t* pPic_in = (x264_picture_t*)malloc(sizeof(x264_picture_t));
+	x264_picture_t* pPic_out = (x264_picture_t*)malloc(sizeof(x264_picture_t));
+	x264_picture_init(pPic_out);//out.picture
+	//I420,yuv420p
+	x264_picture_alloc(pPic_in, X264_CSP_I420, _param->i_width, _param->i_height);
+	bool flag = false;
+	int iNal = 0;
+	x264_nal_t* pNals = NULL;
+	int ret = 0;
+	while (!_is_stop) 
+	{
+		webrtc::VideoFrame frame = _qu.pop(flag, std::chrono::milliseconds(100));
+		if (flag)
+		{
+			memcpy(pPic_in->img.plane[0], frame.video_frame_buffer()->GetI420()->DataY(), frame.video_frame_buffer()->GetI420()->StrideY());
+			memcpy(pPic_in->img.plane[1], frame.video_frame_buffer()->GetI420()->DataU(), frame.video_frame_buffer()->GetI420()->StrideU());
+			memcpy(pPic_in->img.plane[2], frame.video_frame_buffer()->GetI420()->DataV(), frame.video_frame_buffer()->GetI420()->StrideV());
+			ret = x264_encoder_encode(_handle, &pNals, &iNal, pPic_in, pPic_out);
+			if (ret < 0) {
+				printf("Error.\n");
+				break;
+			}
+		}
+	}
 }

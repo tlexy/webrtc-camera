@@ -96,6 +96,9 @@
     <ClCompile Include="test\sdl_player.cpp">
       <Filter>test</Filter>
     </ClCompile>
+    <ClCompile Include="test\x264_encoder.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\device_info_impl.h">
@@ -201,6 +204,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="test\sdl_player.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="test\x264_encoder.h">
       <Filter>test</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,6 +8,11 @@
 #include "common/threadqueue.hpp"
 #include "video_frame/video_frame.h"
 #include "video_frame_subscriber.h"
+extern "C"
+{
+#include "x264.h"
+#include "x264_config.h"
+}
 
 class X264Encoder : public webrtc::test::VideoFrameSubscriber
 {
@@ -30,6 +35,8 @@ private:
 	int _height;
 	int _fps;
 	bool _is_stop{true};
+	x264_t* _handle;
+	x264_param_t* _param;
 };
 
 #endif
