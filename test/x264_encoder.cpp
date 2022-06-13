@@ -91,6 +91,10 @@ void X264Encoder::encode_thread()
 				printf("Error.\n");
 				break;
 			}
+			/*x264_nal_t* nal;
+			for (nal = pNals; nal < pNals + iNal; nal++) {
+				write(outf, nal->p_payload, nal->i_payload);
+			}*/
 		}
 	}
 }

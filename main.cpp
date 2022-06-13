@@ -3,6 +3,7 @@
 #include "core/video_capture_factory.h"
 #include "vcm_capturer.h"
 #include "test/sdl_player.h"
+#include "test/x264_encoder.h"
 
 #pragma comment(lib, "strmiids.lib")
 #pragma comment(lib, "Winmm.lib")
@@ -25,13 +26,19 @@ int main()
     int height = 720;
     auto capturer = webrtc::test::VcmCapturer::Create(width, height, 30, 0);
 
+    auto x264_encoder = std::make_shared<X264Encoder>();
+    x264_encoder->init(width, height, 30);
+
     capturer->AddSubscriber(player);
+    capturer->AddSubscriber(x264_encoder);
 
     capturer->StartCapture();
 
     player->start(capturer->RealWidth(), capturer->RealHeight());
+    x264_encoder->start();
 
     std::cin.get();
     player->stop();
+    x264_encoder->stop();
 	return 0;
 }
