@@ -119,13 +119,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;WEBRTC_WIN;_CRT_SECURE_NO_WARNINGS;HAVE_JPEG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.;3rd\libyuv\include;3rd\SDL2-2.0.14\include;..\..\libjpeg-turbo-2.1.3;..\..\libjpeg-turbo-2.1.3\build;3rd\x264-2020\SMP;3rd\x264-2020;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;3rd\libyuv\include;3rd\SDL2-2.0.14\include;..\..\libjpeg-turbo-2.1.3;..\..\libjpeg-turbo-2.1.3\build;3rd\x264-master;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>x64\Debug\yuv.lib;SDL2.lib;libx264d.lib;3rd\libjpeg-turbo-2.1.3\build\Debug\turbojpeg-static.lib;3rd\libjpeg-turbo-2.1.3\build\simd\simd.dir\Debug\simd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>3rd\SDL2-2.0.14\lib\x64;x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>x64\Debug\yuv.lib;SDL2.lib;libx264.lib;3rd\libjpeg-turbo-2.1.3\build\Debug\turbojpeg-static.lib;3rd\libjpeg-turbo-2.1.3\build\simd\simd.dir\Debug\simd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>3rd\SDL2-2.0.14\lib\x64;x64\Debug;3rd\x264-master;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
