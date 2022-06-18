@@ -4,6 +4,8 @@
 #include "file_saver.h"
 #include <iostream>
 #include <assert.h>
+#include "../rtp_h264/sock_utils.h"
+#include "rtp_h264/rtp_base_common_def.h"
 
 X264Encoder::X264Encoder()
 	:webrtc::test::VideoFrameSubscriber()
@@ -89,6 +91,21 @@ void X264Encoder::encode_thread()
 	x264_nal_t* pNals = NULL;
 	int ret = 0;
 	int counter = 0;
+
+	int sockfd = sockets::Socket(AF_INET, SOCK_DGRAM, 0);
+	const char* ipstr = "127.0.0.1";
+	RtpH264Encoder* rh = new RtpH264Encoder;
+	rtp_parameter param;
+	memset(&param, 0x0, sizeof(param));
+	param.pt = rtp_base::eH264PayLoad;
+	param.version = 2;
+
+	rtp_session sess;
+	sess.seq_number = 10086;
+	sess.timestamp = 0;
+	sess.ssrc = 80136561l;
+	rh->init(param, sess, 3000);
+
 	while (!_is_stop) 
 	{
 		webrtc::VideoFrame frame = _qu.pop(flag, std::chrono::milliseconds(100));
@@ -114,24 +131,59 @@ void X264Encoder::encode_thread()
 			pPic_in->img.i_stride[2] = frame.video_frame_buffer()->GetI420()->StrideV();
 			pPic_in->img.i_plane = 3;*/
 			pPic_in->i_pts = counter;
-			counter += 3000;
+			counter += 1;
 			ret = x264_encoder_encode(_handle, &pNals, &iNal, pPic_in, pPic_out);
 			if (ret < 0) {
 				printf("Error.\n");
 				break;
 			}
-			/*x264_nal_t* nal;
-			for (nal = pNals; nal < pNals + iNal; nal++) {
-				write(outf, nal->p_payload, nal->i_payload);
-			}*/
+			if (ret > 0)
+			{
+				for (int i = 0; i < iNal; ++i) 
+				{
+					//要去除0x00 00 01 或者 0x00 00 00 01
+					int off = 3;
+					unsigned char* p = pNals[i].p_payload;
+					if (p[0] == 0x00 && p[1] == 0x00
+						&& p[2] == 0x00 && p[3] == 0x01)
+					{
+						off = 4;
+					}
+					rh->encode((const char*)pNals[i].p_payload + off, pNals[i].i_payload - off);
+					rtp_packet_t* rtp;
+					int rr = rh->get_packet(rtp);
+					while (rr >= 0)
+					{
+						send_rtp(rtp, sockfd, ipstr, 12500);
+					}
+					
+				}
+			}
 #ifdef SAVEF
 			if (ret > 0)
 			{
-				for (int i = 0; i < iNal; ++i) {
+				for (int i = 0; i < iNal; ++i) 
+				{
 					_h264_file->write((const char*)pNals[i].p_payload, pNals[i].i_payload);
 				}
 			}
 #endif
 		}
 	}
+}
+
+void X264Encoder::send_rtp(rtp_packet_t* rtp, int fd, const char* ipstr, int port)
+{
+	int len = rtp_len(rtp);
+	char* buff = (char*)malloc(len);
+	if (buff)
+	{
+		int ret = rtp_copy(rtp, buff, len);
+		if (ret == 0)
+		{
+			sockets::SendUdpData(fd, ipstr, port, buff, len);
+		}
+		free(buff);
+	}
+	rtp_free(rtp);
 }

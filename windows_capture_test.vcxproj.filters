@@ -22,6 +22,9 @@
     <Filter Include="test">
       <UniqueIdentifier>{0b2226f9-bdec-4caf-911d-fd5ec9150c5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rtp_h264">
+      <UniqueIdentifier>{3a36b046-5ee4-4d0f-b1bc-6949a923cb15}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -101,6 +104,18 @@
     </ClCompile>
     <ClCompile Include="test\file_saver.cpp">
       <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="rtp_h264\rtp.cpp">
+      <Filter>rtp_h264</Filter>
+    </ClCompile>
+    <ClCompile Include="rtp_h264\rtp_h264_decoder.cpp">
+      <Filter>rtp_h264</Filter>
+    </ClCompile>
+    <ClCompile Include="rtp_h264\rtp_h264_encoder.cpp">
+      <Filter>rtp_h264</Filter>
+    </ClCompile>
+    <ClCompile Include="rtp_h264\sock_utils.cpp">
+      <Filter>rtp_h264</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +229,27 @@
     </ClInclude>
     <ClInclude Include="test\file_saver.h">
       <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="rtp_h264\rtp.h">
+      <Filter>rtp_h264</Filter>
+    </ClInclude>
+    <ClInclude Include="rtp_h264\rtp_base_common_def.h">
+      <Filter>rtp_h264</Filter>
+    </ClInclude>
+    <ClInclude Include="rtp_h264\rtp_h264_decoder.h">
+      <Filter>rtp_h264</Filter>
+    </ClInclude>
+    <ClInclude Include="rtp_h264\rtp_h264_encoder.h">
+      <Filter>rtp_h264</Filter>
+    </ClInclude>
+    <ClInclude Include="rtp_h264\rtp_h264_def.h">
+      <Filter>rtp_h264</Filter>
+    </ClInclude>
+    <ClInclude Include="rtp_h264\byte_order.hpp">
+      <Filter>rtp_h264</Filter>
+    </ClInclude>
+    <ClInclude Include="rtp_h264\sock_utils.h">
+      <Filter>rtp_h264</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

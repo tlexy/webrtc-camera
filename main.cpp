@@ -7,6 +7,7 @@
 
 #pragma comment(lib, "strmiids.lib")
 #pragma comment(lib, "Winmm.lib")
+#pragma comment(lib, "ws2_32.lib")
 
 #undef main
 
