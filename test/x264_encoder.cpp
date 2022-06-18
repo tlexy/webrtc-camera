@@ -106,7 +106,7 @@ void X264Encoder::encode_thread()
 			int u = frame.video_frame_buffer()->GetI420()->StrideU() * _param->i_height / 2;
 			int v = frame.video_frame_buffer()->GetI420()->StrideV() * _param->i_height / 2;
 			memcpy(pPic_in->img.plane[0], frame.video_frame_buffer()->GetI420()->DataY(), y);
-			memcpy(pPic_in->img.plane[1], frame.video_frame_buffer()->GetI420()->DataU(), u+v);
+			memcpy(pPic_in->img.plane[1], frame.video_frame_buffer()->GetI420()->DataU(), u);
 			memcpy(pPic_in->img.plane[2], frame.video_frame_buffer()->GetI420()->DataV(), v);
 			//memset(pPic_in->img.plane[2], 0x0, v);
 			/*pPic_in->img.i_stride[0] = frame.video_frame_buffer()->GetI420()->StrideY();

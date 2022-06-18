@@ -22,7 +22,7 @@ int main()
 
     auto player = std::make_shared<SdlPlayer>();
 
-    int width = 1080;
+    int width = 1280;
     int height = 720;
     auto capturer = webrtc::test::VcmCapturer::Create(width, height, 30, 0);
 
