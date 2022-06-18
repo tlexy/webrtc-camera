@@ -1,10 +1,15 @@
 #include "x264_encoder.h"
 #include "video_frame/video_frame_buffer.h"
 #include "video_frame/i420_buffer.h"
+#include "file_saver.h"
 
 X264Encoder::X264Encoder()
 	:webrtc::test::VideoFrameSubscriber()
-{}
+{
+#ifdef SAVEF
+	_h264_file = new FileSaver(1024*1024*10, "h264_i420", ".h264");
+#endif
+}
 
 void X264Encoder::OnFrame(const webrtc::VideoFrame& frame)
 {
@@ -65,6 +70,9 @@ void X264Encoder::stop()
 		_th->join();
 		_th = nullptr;
 	}
+#ifdef SAVEF
+	_h264_file->save();
+#endif
 }
 
 void X264Encoder::encode_thread()
@@ -78,6 +86,7 @@ void X264Encoder::encode_thread()
 	int iNal = 0;
 	x264_nal_t* pNals = NULL;
 	int ret = 0;
+	int counter = 0;
 	while (!_is_stop) 
 	{
 		webrtc::VideoFrame frame = _qu.pop(flag, std::chrono::milliseconds(100));
@@ -86,6 +95,11 @@ void X264Encoder::encode_thread()
 			memcpy(pPic_in->img.plane[0], frame.video_frame_buffer()->GetI420()->DataY(), frame.video_frame_buffer()->GetI420()->StrideY());
 			memcpy(pPic_in->img.plane[1], frame.video_frame_buffer()->GetI420()->DataU(), frame.video_frame_buffer()->GetI420()->StrideU());
 			memcpy(pPic_in->img.plane[2], frame.video_frame_buffer()->GetI420()->DataV(), frame.video_frame_buffer()->GetI420()->StrideV());
+			/*pPic_in->img.i_stride[0] = frame.video_frame_buffer()->GetI420()->StrideY();
+			pPic_in->img.i_stride[1] = frame.video_frame_buffer()->GetI420()->StrideU();
+			pPic_in->img.i_stride[2] = frame.video_frame_buffer()->GetI420()->StrideV();
+			pPic_in->img.i_plane = 3;*/
+			pPic_in->i_pts = counter++;
 			ret = x264_encoder_encode(_handle, &pNals, &iNal, pPic_in, pPic_out);
 			if (ret < 0) {
 				printf("Error.\n");
@@ -95,6 +109,14 @@ void X264Encoder::encode_thread()
 			for (nal = pNals; nal < pNals + iNal; nal++) {
 				write(outf, nal->p_payload, nal->i_payload);
 			}*/
+#ifdef SAVEF
+			if (ret > 0)
+			{
+				for (int i = 0; i < iNal; ++i) {
+					_h264_file->write((const char*)pNals[i].p_payload, pNals[i].i_payload);
+				}
+			}
+#endif
 		}
 	}
 }

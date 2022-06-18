@@ -99,6 +99,9 @@
     <ClCompile Include="test\x264_encoder.cpp">
       <Filter>test</Filter>
     </ClCompile>
+    <ClCompile Include="test\file_saver.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\device_info_impl.h">
@@ -207,6 +210,9 @@
       <Filter>test</Filter>
     </ClInclude>
     <ClInclude Include="test\x264_encoder.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="test\file_saver.h">
       <Filter>test</Filter>
     </ClInclude>
   </ItemGroup>

@@ -154,6 +154,7 @@
     <ClCompile Include="core\video_capture_factory.cc" />
     <ClCompile Include="core\video_capture_impl.cc" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="test\file_saver.cpp" />
     <ClCompile Include="test\x264_encoder.cpp" />
     <ClCompile Include="test\sdl_player.cpp" />
     <ClCompile Include="vcm_capturer.cc" />
@@ -190,6 +191,7 @@
     <ClInclude Include="core\video_capture_defines.h" />
     <ClInclude Include="core\video_capture_factory.h" />
     <ClInclude Include="core\video_capture_impl.h" />
+    <ClInclude Include="test\file_saver.h" />
     <ClInclude Include="test\x264_encoder.h" />
     <ClInclude Include="test\sdl_player.h" />
     <ClInclude Include="vcm_capturer.h" />
