@@ -2,12 +2,14 @@
 #include "video_frame/video_frame_buffer.h"
 #include "video_frame/i420_buffer.h"
 #include "file_saver.h"
+#include <iostream>
+#include <assert.h>
 
 X264Encoder::X264Encoder()
 	:webrtc::test::VideoFrameSubscriber()
 {
 #ifdef SAVEF
-	_h264_file = new FileSaver(1024*1024*10, "h264_i420", ".h264");
+	_h264_file = new FileSaver(1024*1024*100, "h264_i420_", ".h264");
 #endif
 }
 
@@ -35,7 +37,7 @@ void X264Encoder::init(int width, int height, int fps)
 	pParam->i_csp = X264_CSP_I420;//yuv420p
 	pParam->i_width = width;   // 宽度
 	pParam->i_height = height;  // 高度
-	pParam->i_fps_num = 25;     // 设置帧率（分子）
+	pParam->i_fps_num = 30;     // 设置帧率（分子）
 	pParam->i_fps_den = 1;      // 设置帧率时间1s（分母）
 
 	pParam->i_threads = X264_SYNC_LOOKAHEAD_AUTO;
@@ -92,14 +94,27 @@ void X264Encoder::encode_thread()
 		webrtc::VideoFrame frame = _qu.pop(flag, std::chrono::milliseconds(100));
 		if (flag)
 		{
-			memcpy(pPic_in->img.plane[0], frame.video_frame_buffer()->GetI420()->DataY(), frame.video_frame_buffer()->GetI420()->StrideY());
-			memcpy(pPic_in->img.plane[1], frame.video_frame_buffer()->GetI420()->DataU(), frame.video_frame_buffer()->GetI420()->StrideU());
-			memcpy(pPic_in->img.plane[2], frame.video_frame_buffer()->GetI420()->DataV(), frame.video_frame_buffer()->GetI420()->StrideV());
+			assert(_param->i_height == frame.video_frame_buffer()->GetI420()->height()
+				&& _param->i_width == frame.video_frame_buffer()->GetI420()->width());
+			/*_h264_file->write((const char*)frame.video_frame_buffer()->GetI420()->DataY(), frame.video_frame_buffer()->GetI420()->StrideY());
+			_h264_file->write((const char*)frame.video_frame_buffer()->GetI420()->DataU(), frame.video_frame_buffer()->GetI420()->StrideU());
+			_h264_file->write((const char*)frame.video_frame_buffer()->GetI420()->DataV(), frame.video_frame_buffer()->GetI420()->StrideV());*/
+			std::cout << "stride: " << frame.video_frame_buffer()->GetI420()->StrideY() << ":" << frame.video_frame_buffer()->GetI420()->StrideU()
+				<< ":" << frame.video_frame_buffer()->GetI420()->StrideV() << "|" << frame.video_frame_buffer()->GetI420()->height() << ":"
+				<< frame.video_frame_buffer()->GetI420()->width() << std::endl;
+			int y = frame.video_frame_buffer()->GetI420()->StrideY() * _param->i_height;
+			int u = frame.video_frame_buffer()->GetI420()->StrideU() * _param->i_height / 2;
+			int v = frame.video_frame_buffer()->GetI420()->StrideV() * _param->i_height / 2;
+			memcpy(pPic_in->img.plane[0], frame.video_frame_buffer()->GetI420()->DataY(), y);
+			memcpy(pPic_in->img.plane[1], frame.video_frame_buffer()->GetI420()->DataU(), u+v);
+			memcpy(pPic_in->img.plane[2], frame.video_frame_buffer()->GetI420()->DataV(), v);
+			//memset(pPic_in->img.plane[2], 0x0, v);
 			/*pPic_in->img.i_stride[0] = frame.video_frame_buffer()->GetI420()->StrideY();
 			pPic_in->img.i_stride[1] = frame.video_frame_buffer()->GetI420()->StrideU();
 			pPic_in->img.i_stride[2] = frame.video_frame_buffer()->GetI420()->StrideV();
 			pPic_in->img.i_plane = 3;*/
-			pPic_in->i_pts = counter++;
+			pPic_in->i_pts = counter;
+			counter += 3000;
 			ret = x264_encoder_encode(_handle, &pNals, &iNal, pPic_in, pPic_out);
 			if (ret < 0) {
 				printf("Error.\n");
