@@ -4,6 +4,7 @@
 #include "vcm_capturer.h"
 #include "test/sdl_player.h"
 #include "test/x264_encoder.h"
+#include "rtp_h264/sock_utils.h"
 
 #pragma comment(lib, "strmiids.lib")
 #pragma comment(lib, "Winmm.lib")
@@ -13,6 +14,7 @@
 
 int main()
 {
+    sockets::Init();
     std::unique_ptr<webrtc::VideoCaptureModule::DeviceInfo> info(
         webrtc::VideoCaptureFactory::CreateDeviceInfo());
     if (!info) {
@@ -23,8 +25,8 @@ int main()
 
     auto player = std::make_shared<SdlPlayer>();
 
-    int width = 1280;
-    int height = 720;
+    int width = 640;
+    int height = 480;
     auto capturer = webrtc::test::VcmCapturer::Create(width, height, 30, 0);
 
     auto x264_encoder = std::make_shared<X264Encoder>();
@@ -41,5 +43,8 @@ int main()
     std::cin.get();
     player->stop();
     x264_encoder->stop();
+
+    sockets::Destroy();
+
 	return 0;
 }

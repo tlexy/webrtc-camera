@@ -339,7 +339,7 @@ namespace sockets
 		sin.sin_port = htons(port); //网络字节序的端口号
 		sin.sin_addr.s_addr = inet_addr(ip_str);
 
-		sendto(fd, data, len, 0, (struct sockaddr*)&sin, sizeof(sin));
+		int ret = sendto(fd, data, len, 0, (struct sockaddr*)&sin, sizeof(sin));
 		return len;
 	}
 }

@@ -43,11 +43,11 @@ void X264Encoder::init(int width, int height, int fps)
 	pParam->i_fps_den = 1;      // 设置帧率时间1s（分母）
 
 	pParam->i_threads = X264_SYNC_LOOKAHEAD_AUTO;
-	pParam->i_keyint_max = 10;              //在此间隔设置IDR关键帧
+	pParam->i_keyint_max = 30;              //在此间隔设置IDR关键帧
 	///slice :live 直播
-	pParam->i_slice_count = 4;
+	pParam->i_slice_count = 1;
 
-	pParam->rc.i_bitrate = 1200;       // 设置码率,在ABR(平均码率)模式下才生效，且必须在设置ABR前先设置bitrate
+	pParam->rc.i_bitrate = 200;       // 设置码率,在ABR(平均码率)模式下才生效，且必须在设置ABR前先设置bitrate
 	pParam->rc.i_rc_method = X264_RC_ABR;  // 码率控制方法，CQP(恒定质量)，CRF(恒定码率,缺省值23)，ABR(平均码率)
 	x264_param_apply_profile(pParam, "baseline");
 
@@ -155,6 +155,7 @@ void X264Encoder::encode_thread()
 					while (rr >= 0)
 					{
 						send_rtp(rtp, sockfd, ipstr, 12500);
+						rr = rh->get_packet(rtp);
 					}
 					
 				}

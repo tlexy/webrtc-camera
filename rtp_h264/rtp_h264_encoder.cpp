@@ -1,5 +1,6 @@
 ﻿#include "rtp_h264_encoder.h"
 #include <stdlib.h>
+#include "byte_order.hpp"
 
 void RtpH264Encoder::init(rtp_parameter_t param, rtp_session_t sess, int ts_step)
 {
@@ -72,6 +73,39 @@ int RtpH264Encoder::get_packet(rtp_packet_t*& rtp)
 void RtpH264Encoder::pack(rtp_packet_t*& rtp, int count)
 {
 	//将SPP/PPS打包为一个RTP包
+	if (_unpack_list.size() < count)
+	{
+		return;
+	}
+	int packet_size = 0;
+	int num = 0;
+	std::list<NALU_UNIT*> temp_list;
+	for (auto it = _unpack_list.begin(); it != _unpack_list.end() && num < count; ++it)
+	{
+		packet_size += (*it)->len;
+		++num;
+		temp_list.push_back(*it);
+	}
+	
+	char* buff = (char*)malloc(1 + 2 * count + packet_size);
+	NALU_HEADER* stap_hdr = (NALU_HEADER*)buff;
+	stap_hdr->TYPE = 24;
+	stap_hdr->F = 0;
+	stap_hdr->NRI = 0;
+
+	int off = 1;
+	num = 0;
+	for (auto it = temp_list.begin(); it != temp_list.end(); ++it)
+	{
+		int* size = (int*)(buff + off);
+		*size = sockets::hostToNetwork16((*it)->len);
+		off += 2;
+		memcpy(buff + off, (*it)->payload, (*it)->len);
+		off += (*it)->len;
+
+		_unpack_list.pop_front();
+	}
+	rtp = pack_single(buff, 1 + 2 * count + packet_size, false);
 }
 
 void RtpH264Encoder::pack(rtp_packet_t*& rtp)
@@ -84,6 +118,10 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 	{
 		time_inc = false;
 	}
+	/*else if ((hdr->TYPE & NALU_TYPE_MASK) == NALU_TYPE_IDR)
+	{
+		time_inc = false;
+	}*/
 	int count = nalu->len / MAX_NALU_LEN;
 	if (count * MAX_NALU_LEN < nalu->len)
 	{
@@ -96,42 +134,30 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 	else
 	{
 		FU_INDICATOR fuidc;
+		fuidc.F = 0;
+		fuidc.NRI = hdr->NRI;
+		fuidc.TYPE = 28;
+
 		FU_HEADER fuhdr;
+		fuhdr.TYPE = hdr->TYPE;
+		fuhdr.R = 0;
 		//拆分为多个rtp包
 		for (int i = 1; i <= count; ++i)
 		{
 			if (i == 1)
 			{
-				fuidc.F = 0;
-				fuidc.NRI = 0;
-				fuidc.TYPE = 28;
-
 				fuhdr.E = 0;
-				fuhdr.R = 0;
 				fuhdr.S = 1;
-				fuhdr.TYPE = hdr->TYPE;
 			}
 			else if (i > 1 && i < count)
 			{
-				fuidc.F = 0;
-				fuidc.NRI = 0;
-				fuidc.TYPE = 28;
-
 				fuhdr.E = 0;
-				fuhdr.R = 0;
 				fuhdr.S = 0;
-				fuhdr.TYPE = hdr->TYPE;
 			}
 			else
 			{
-				fuidc.F = 0;
-				fuidc.NRI = 0;
-				fuidc.TYPE = 28;
-
 				fuhdr.E = 1;
-				fuhdr.R = 0;
 				fuhdr.S = 0;
-				fuhdr.TYPE = hdr->TYPE;
 			}
 			int fua_len = nalu->len - (i - 1) * MAX_NALU_LEN;
 			if (fua_len > MAX_NALU_LEN)
@@ -141,10 +167,15 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 			rtp_packet_t* rtp_temp;
 			pack_FuA(rtp_temp, &fuidc, &fuhdr, nalu->payload + (i - 1) * MAX_NALU_LEN, fua_len, time_inc);
 			_pack_rtp.push_back(rtp_temp);
+			if ((hdr->TYPE & NALU_TYPE_MASK) == NALU_TYPE_IDR)
+			{
+				time_inc = false;
+			}
 		}
 		rtp = _pack_rtp.front();
 		_pack_rtp.pop_front();
 	}
+	
 }
 
 void RtpH264Encoder::pack_FuA(rtp_packet_t*& rtp, FU_INDICATOR* idc, FU_HEADER* hdr, 

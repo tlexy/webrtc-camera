@@ -3,11 +3,12 @@
 
 #include <stdint.h>
 
-#define NALU_TYPE_MASK 0X07
+#define NALU_TYPE_MASK 0X0f
 
 #define NALU_TYPE_SPS 0x07
 #define NALU_TYPE_PPS 0x08
 #define NALU_TYPE_SEI 0x06
+#define NALU_TYPE_IDR 0x05
 
 typedef struct {
     //byte 0
