@@ -76,7 +76,7 @@ void rtp_pack(rtp_packet_t* rtp, rtp_parameter_t* param, rtp_session_t* session,
 //复制一个rtp包的内容（到dest指定的内存中）
 int rtp_copy(rtp_packet_t* rtp, void* dest, int dest_len);
 
-//是否可能是一个rtp包
+//是否可能是一个rtp包，返回0代表是一个rtp包
 int rtp_unpack_test(void* src, int len);
 
 int rtp_payload_type(void* src, int len);
