@@ -10,6 +10,8 @@
 #define NALU_TYPE_SEI 0x06
 #define NALU_TYPE_IDR 0x05
 
+#include <stdint.h>
+
 typedef struct {
     //byte 0
     unsigned char TYPE : 5;
@@ -34,6 +36,15 @@ typedef struct {
     unsigned char E : 1;
     unsigned char S : 1;
 } FU_HEADER; /**//* 1 BYTES */
+
+typedef struct
+{
+    uint8_t start_code[4];
+    uint8_t _start_code_len;
+    NALU_HEADER* hdr;
+    uint8_t* payload;
+    int payload_len;
+} NALU;
 
 typedef struct
 {
