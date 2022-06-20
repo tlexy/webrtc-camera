@@ -49,10 +49,19 @@ NALU* RtpH264Decoder::decode_fua(rtp_packet_t* rtp)
 	else
 	{
 		//如果不是同一时间或者收到迟到的包
+		//如果不是第一个包，那么链表中至少有一个包存在
 		if (_last_ts != rtp->hdr.timestamp
-			|| rtp->hdr.seq_number < _last_seqno)
+			|| rtp->hdr.seq_number < _last_seqno
+			|| _fu_list.size() == 0)
 		{
+			rtp_free(rtp);
 			//丢弃所有收到的fua包
+			for (auto it = _fu_list.begin(); it != _fu_list.end(); ++it)
+			{
+				rtp_free(*it);
+			}
+			_fu_list.clear();
+			return nullptr;
 		}
 		if (rtp->hdr.seq_number > _last_seqno && rtp->hdr.seq_number - _last_seqno == 1)
 		{
@@ -61,10 +70,85 @@ NALU* RtpH264Decoder::decode_fua(rtp_packet_t* rtp)
 		if (is_last_fua(rtp))
 		{
 			//输出（重新整合）整个NALU包
+			auto nalu = assembly_nalu(_fu_list);
+			for (auto it = _fu_list.begin(); it != _fu_list.end(); ++it)
+			{
+				rtp_free(*it);
+			}
+			_fu_list.clear();
+			return nalu;
 		}
 	}
-	NALU_HEADER* hdr = (NALU_HEADER*)rtp->arr;
-	
+	return nullptr;
+}
+
+bool RtpH264Decoder::is_first_fua(rtp_packet_t* rtp)
+{
+	if (rtp_len(rtp) <= 2)
+	{
+		return false;
+	}
+	FU_INDICATOR* idc = (FU_INDICATOR*)rtp->arr;
+	FU_HEADER* hdr = (FU_HEADER*)(rtp->arr + 1);
+	if (hdr->S == 1 && hdr->R == 0 && hdr->E == 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+bool RtpH264Decoder::is_last_fua(rtp_packet_t* rtp)
+{
+	if (rtp_len(rtp) <= 2)
+	{
+		return false;
+	}
+	FU_HEADER* hdr = (FU_HEADER*)(rtp->arr + 1);
+	if (hdr->S == 0 && hdr->R == 0 && hdr->E == 1)
+	{
+		return true;
+	}
+	return false;
+}
+
+NALU* RtpH264Decoder::assembly_nalu(const std::list<rtp_packet_t*>&)
+{
+	if (_fu_list.size() < 2)
+	{
+		_fu_list.clear();
+		return nullptr;
+	}
+	int total_len = 1;
+	for (auto it = _fu_list.begin(); it != _fu_list.end(); ++it)
+	{
+		total_len = total_len + (*it)->payload_len;
+	}
+	NALU* nalu = new NALU;
+	if (!nalu)
+	{
+		return nullptr;
+	}
+	nalu->payload_len = total_len;
+	nalu->payload = (uint8_t*)malloc(nalu->payload_len);
+	nalu->start_code[0] = 0x0;
+	nalu->start_code[1] = 0x0;
+	nalu->start_code[2] = 0x01;
+	nalu->start_code[3] = 0x01;
+	nalu->_start_code_len = 3;
+	nalu->hdr = (NALU_HEADER*)nalu->payload;
+
+	FU_INDICATOR* idc = (FU_INDICATOR*)(nalu->payload + 1);
+	FU_HEADER* hdr = (FU_HEADER*)(nalu->payload + 2);
+	nalu->hdr->F = 0;
+	nalu->hdr->NRI = idc->NRI;
+	nalu->hdr->TYPE = hdr->TYPE;
+	int off = 1;
+	for (auto it = _fu_list.begin(); it != _fu_list.end(); ++it)
+	{
+		memcpy(nalu->payload + off, (*it)->arr, (*it)->payload_len);
+		off += ((*it)->payload_len);
+	}
+	return nalu;
 }
 
 NALU* RtpH264Decoder::decode_single(const uint8_t* payload, int len)

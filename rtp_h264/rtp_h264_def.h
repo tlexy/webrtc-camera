@@ -42,7 +42,7 @@ typedef struct
     uint8_t start_code[4];
     uint8_t _start_code_len;
     NALU_HEADER* hdr;
-    FU_HEADER* fu_hdr;
+    //FU_HEADER* fu_hdr;
     uint8_t* payload;
     int payload_len;
 } NALU;

@@ -19,6 +19,10 @@ private:
 	NALU* decode_single(const uint8_t* payload, int len);
 	NALU* decode_fua(rtp_packet_t*);
 
+	bool is_first_fua(rtp_packet_t* rtp);
+	bool is_last_fua(rtp_packet_t* rtp);
+	NALU* assembly_nalu(const std::list<rtp_packet_t*>&);
+
 private:
 	uint8_t* _buff;
 	int _buff_size;
@@ -26,7 +30,7 @@ private:
 	uint16_t _last_seqno{0};
 	uint32_t _last_ts{ 0 };
 	std::list<rtp_packet_t*> _fu_list;
-	int32_t _drop_ts{ 0 };
+	uint32_t _drop_ts{ 0 };
 };
 
 
