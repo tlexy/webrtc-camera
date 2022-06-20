@@ -13,6 +13,8 @@ X264Encoder::X264Encoder()
 #ifdef SAVEF
 	_h264_file = new FileSaver(1024*1024*100, "h264_i420_", ".h264");
 #endif
+	_rhd = new RtpH264Decoder;
+	_rtp_save = new FileSaver(1024 * 1024 * 100, "rtp_i420_", ".h264");
 }
 
 void X264Encoder::OnFrame(const webrtc::VideoFrame& frame)
@@ -77,6 +79,7 @@ void X264Encoder::stop()
 #ifdef SAVEF
 	_h264_file->save();
 #endif
+	_rtp_save->save();
 }
 
 void X264Encoder::encode_thread()
@@ -176,15 +179,27 @@ void X264Encoder::encode_thread()
 void X264Encoder::send_rtp(rtp_packet_t* rtp, int fd, const char* ipstr, int port)
 {
 	int len = rtp_len(rtp);
-	char* buff = (char*)malloc(len);
+	uint8_t* buff = (uint8_t*)malloc(len);
 	if (buff)
 	{
 		int ret = rtp_copy(rtp, buff, len);
 		if (ret == 0)
 		{
-			sockets::SendUdpData(fd, ipstr, port, buff, len);
+			//sockets::SendUdpData(fd, ipstr, port, buff, len);
+			auto nalu = _rhd->decode_rtp(buff, len);
+			if (nalu)
+			{
+				save_nalu(nalu);
+			}
 		}
 		free(buff);
 	}
 	rtp_free(rtp);
+}
+
+void X264Encoder::save_nalu(NALU* nalu)
+{
+	_rtp_save->write((const char*)nalu->start_code, nalu->_start_code_len);
+	_rtp_save->write((const char*)nalu->payload, nalu->payload_len);
+	free(nalu->payload);
 }
