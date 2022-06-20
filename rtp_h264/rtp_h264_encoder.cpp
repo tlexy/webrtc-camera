@@ -181,13 +181,14 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 void RtpH264Encoder::pack_FuA(rtp_packet_t*& rtp, FU_INDICATOR* idc, FU_HEADER* hdr, 
 	const char* Nalu, int len, bool time_inc)
 {
-	rtp = rtp_alloc(2 + len);//sizeof(FU_INDICATOR) + sizeof(FU_HEADER) + len;
+	int payload_len = 2 + len;
+	rtp = rtp_alloc(payload_len);//sizeof(FU_INDICATOR) + sizeof(FU_HEADER) + len;
 	if (time_inc)
 	{
 		_sess.timestamp += _ts_step;
 	}
 	_sess.seq_number += 1;
-	rtp_pack(rtp, &_param, &_sess, Nalu, len, 2);
+	rtp_pack(rtp, &_param, &_sess, Nalu, payload_len, 2);
 	FU_INDICATOR* pidc = (FU_INDICATOR*)rtp->arr;
 	pidc->F = idc->F;
 	pidc->NRI = idc->NRI;

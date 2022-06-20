@@ -119,9 +119,9 @@ void X264Encoder::encode_thread()
 			/*_h264_file->write((const char*)frame.video_frame_buffer()->GetI420()->DataY(), frame.video_frame_buffer()->GetI420()->StrideY());
 			_h264_file->write((const char*)frame.video_frame_buffer()->GetI420()->DataU(), frame.video_frame_buffer()->GetI420()->StrideU());
 			_h264_file->write((const char*)frame.video_frame_buffer()->GetI420()->DataV(), frame.video_frame_buffer()->GetI420()->StrideV());*/
-			std::cout << "stride: " << frame.video_frame_buffer()->GetI420()->StrideY() << ":" << frame.video_frame_buffer()->GetI420()->StrideU()
+			/*std::cout << "stride: " << frame.video_frame_buffer()->GetI420()->StrideY() << ":" << frame.video_frame_buffer()->GetI420()->StrideU()
 				<< ":" << frame.video_frame_buffer()->GetI420()->StrideV() << "|" << frame.video_frame_buffer()->GetI420()->height() << ":"
-				<< frame.video_frame_buffer()->GetI420()->width() << std::endl;
+				<< frame.video_frame_buffer()->GetI420()->width() << std::endl;*/
 			int y = frame.video_frame_buffer()->GetI420()->StrideY() * _param->i_height;
 			int u = frame.video_frame_buffer()->GetI420()->StrideU() * _param->i_height / 2;
 			int v = frame.video_frame_buffer()->GetI420()->StrideV() * _param->i_height / 2;
@@ -151,6 +151,10 @@ void X264Encoder::encode_thread()
 						&& p[2] == 0x00 && p[3] == 0x01)
 					{
 						off = 4;
+					}
+					if (pNals[i].i_payload > 1360)
+					{
+ 						int a = 1;
 					}
 					rh->encode((const char*)pNals[i].p_payload + off, pNals[i].i_payload - off);
 					rtp_packet_t* rtp;
@@ -185,7 +189,7 @@ void X264Encoder::send_rtp(rtp_packet_t* rtp, int fd, const char* ipstr, int por
 		int ret = rtp_copy(rtp, buff, len);
 		if (ret == 0)
 		{
-			//sockets::SendUdpData(fd, ipstr, port, buff, len);
+			sockets::SendUdpData(fd, ipstr, port, (const char*)buff, len);
 			auto nalu = _rhd->decode_rtp(buff, len);
 			if (nalu)
 			{
@@ -199,6 +203,11 @@ void X264Encoder::send_rtp(rtp_packet_t* rtp, int fd, const char* ipstr, int por
 
 void X264Encoder::save_nalu(NALU* nalu)
 {
+	NALU_HEADER* hdr = (NALU_HEADER*)nalu->payload;
+	if (hdr->TYPE & NALU_TYPE_MASK == NALU_TYPE_IDR)
+	{
+		std::cout << "IDR slice..." << std::endl;
+	}
 	_rtp_save->write((const char*)nalu->start_code, nalu->_start_code_len);
 	_rtp_save->write((const char*)nalu->payload, nalu->payload_len);
 	free(nalu->payload);

@@ -132,7 +132,7 @@ void VcmCapturer::broadcaster_thread()
         VideoFrame frame = _qu.pop(flag, std::chrono::milliseconds(1000));
         if (flag)
         {
-            std::cout << "broadcaster_thread..." << std::endl;
+            //std::cout << "broadcaster_thread..." << std::endl;
             for (int i = 0; i < _subs.size(); ++i)
             {
                 _subs[i]->OnFrame(frame);

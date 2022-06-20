@@ -24,6 +24,7 @@ private:
 
 private:
 	uint16_t _last_seqno{0};
+	uint16_t _start_seqno{ 0 };
 	uint32_t _last_ts{ 0 };
 	std::list<rtp_packet_t*> _fu_list;
 	uint32_t _drop_ts{ 0 };
