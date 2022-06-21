@@ -19,6 +19,7 @@ NALU* RtpH264Decoder::decode_rtp(const uint8_t* payload, int len)
 		return nullptr;
 	}
 	rtp_packet_t* rtp = rtp_unpack((void*)payload, len);
+	//std::cout << "recv rtp, seqno = " << rtp->hdr.seq_number << "\tpayload len:" << rtp->payload_len << std::endl;
 	NALU_HEADER* hdr = (NALU_HEADER*)rtp->arr;
 	if (hdr->TYPE != 28)
 	{
@@ -68,9 +69,10 @@ NALU* RtpH264Decoder::decode_fua(rtp_packet_t* rtp)
 		}
 		if (is_last_fua(rtp))
 		{
-			std::cout << "seq diff: " << _last_seqno - _start_seqno << std::endl;
+			//std::cout << "seq diff: " << _last_seqno - _start_seqno << std::endl;
 			//输出（重新整合）整个NALU包
 			auto nalu = assembly_nalu(_fu_list);
+			std::cout << "fua len: " << nalu->payload_len << std::endl;
 			for (auto it = _fu_list.begin(); it != _fu_list.end(); ++it)
 			{
 				rtp_free(*it);

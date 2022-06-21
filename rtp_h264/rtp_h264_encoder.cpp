@@ -137,7 +137,7 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 	}
 	else
 	{
-		std::cout << "PACK MUTLI" << std::endl;
+		std::cout << "PACK MUTLI, len: " << nalu->len << std::endl;
 		FU_INDICATOR fuidc;
 		fuidc.F = 0;
 		fuidc.NRI = hdr->NRI;
@@ -169,7 +169,7 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 			{
 				int a = 1;
 			}
-			std::cout << "nalu len: " << nalu->len << std::endl;
+			//std::cout << "nalu len: " << nalu->len << std::endl;
 			int fua_len = nalu->len - (i - 1) * MAX_NALU_LEN - header_off;
 			if (fua_len > MAX_NALU_LEN)
 			{
@@ -233,7 +233,7 @@ void RtpH264Encoder::pack_FuA(rtp_packet_t*& rtp, FU_INDICATOR* idc, FU_HEADER* 
 
 rtp_packet_t* RtpH264Encoder::pack_single(const char* Nalu, int len, bool time_inc)
 {
-	std::cout << "PACK SINGLE" << std::endl;
+	//std::cout << "PACK SINGLE" << std::endl;
 	rtp_packet_t* rtp = rtp_alloc(len);
 	if (time_inc)
 	{

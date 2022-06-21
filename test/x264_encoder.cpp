@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "../rtp_h264/sock_utils.h"
 #include "rtp_h264/rtp_base_common_def.h"
+#include "rtp_h264/byte_order.hpp"
 
 X264Encoder::X264Encoder()
 	:webrtc::test::VideoFrameSubscriber()
@@ -156,7 +157,7 @@ void X264Encoder::encode_thread()
 					{
  						int a = 1;
 					}
-					std::cout << "payload: " << pNals[i].i_payload - off << std::endl;
+					//std::cout << "payload: " << pNals[i].i_payload - off << std::endl;
 					rh->encode((const char*)pNals[i].p_payload + off, pNals[i].i_payload - off);
 					rtp_packet_t* rtp;
 					int rr = rh->get_packet(rtp);
@@ -184,6 +185,7 @@ void X264Encoder::encode_thread()
 void X264Encoder::send_rtp(rtp_packet_t* rtp, int fd, const char* ipstr, int port)
 {
 	int len = rtp_len(rtp);
+	//std::cout << "send rtp, seqno = " << sockets::networkToHost16(rtp->hdr.seq_number) << "\tpayload len:" << rtp->payload_len << std::endl;
 	uint8_t* buff = (uint8_t*)malloc(len);
 	if (buff)
 	{
