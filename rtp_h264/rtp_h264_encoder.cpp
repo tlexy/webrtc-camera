@@ -1,6 +1,7 @@
 ﻿#include "rtp_h264_encoder.h"
 #include <stdlib.h>
 #include "byte_order.hpp"
+#include <iostream>
 
 void RtpH264Encoder::init(rtp_parameter_t param, rtp_session_t sess, int ts_step)
 {
@@ -53,12 +54,14 @@ int RtpH264Encoder::get_packet(rtp_packet_t*& rtp)
 			pack(rtp, 2);
 			return _unpack_list.size();
 		}*/
+		std::cout << "SPS PACK" << std::endl;
 		rtp = pack_single(nalu->payload, nalu->len, false);
 		_unpack_list.pop_front();
 		return _unpack_list.size();
 	}
 	else if ((hdr->TYPE & NALU_TYPE_MASK) == NALU_TYPE_PPS)
 	{
+		std::cout << "PPS PACK" << std::endl;
 		rtp = pack_single(nalu->payload, nalu->len, false);
 		_unpack_list.pop_front();
 		return _unpack_list.size();
@@ -123,16 +126,18 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 		time_inc = false;
 	}*/
 	int count = nalu->len / MAX_NALU_LEN;
+	int rem = nalu->len % MAX_NALU_LEN;
 	if (count * MAX_NALU_LEN < nalu->len)
 	{
 		count += 1;
 	}
-	if (count == 1)
+	if (count == 1 || (count == 1 && rem == 1))
 	{
 		rtp = pack_single(nalu->payload, nalu->len, time_inc);
 	}
 	else
 	{
+		std::cout << "PACK MUTLI" << std::endl;
 		FU_INDICATOR fuidc;
 		fuidc.F = 0;
 		fuidc.NRI = hdr->NRI;
@@ -142,6 +147,7 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 		fuhdr.TYPE = hdr->TYPE;
 		fuhdr.R = 0;
 		//拆分为多个rtp包
+		int header_off = 1;
 		for (int i = 1; i <= count; ++i)
 		{
 			if (i == 1)
@@ -159,14 +165,22 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 				fuhdr.E = 1;
 				fuhdr.S = 0;
 			}
-			int fua_len = nalu->len - (i - 1) * MAX_NALU_LEN;
+			if (nalu->len == 1361)
+			{
+				int a = 1;
+			}
+			std::cout << "nalu len: " << nalu->len << std::endl;
+			int fua_len = nalu->len - (i - 1) * MAX_NALU_LEN - header_off;
 			if (fua_len > MAX_NALU_LEN)
 			{
 				fua_len = MAX_NALU_LEN;
 			}
-			rtp_packet_t* rtp_temp;
-			pack_FuA(rtp_temp, &fuidc, &fuhdr, nalu->payload + (i - 1) * MAX_NALU_LEN, fua_len, time_inc);
-			_pack_rtp.push_back(rtp_temp);
+			rtp_packet_t* rtp_temp = nullptr;
+			pack_FuA(rtp_temp, &fuidc, &fuhdr, nalu->payload + (i - 1) * MAX_NALU_LEN + header_off, fua_len, time_inc);
+			if (rtp_temp)
+			{
+				_pack_rtp.push_back(rtp_temp);
+			}
 			if ((hdr->TYPE & NALU_TYPE_MASK) == NALU_TYPE_IDR)
 			{
 				time_inc = false;
@@ -181,7 +195,15 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 void RtpH264Encoder::pack_FuA(rtp_packet_t*& rtp, FU_INDICATOR* idc, FU_HEADER* hdr, 
 	const char* Nalu, int len, bool time_inc)
 {
+	if (len <= 0)
+	{
+		return;
+	}
 	int payload_len = 2 + len;
+	if (payload_len > 1362)
+	{
+		int a = 1;
+	}
 	rtp = rtp_alloc(payload_len);//sizeof(FU_INDICATOR) + sizeof(FU_HEADER) + len;
 	if (time_inc)
 	{
@@ -189,6 +211,10 @@ void RtpH264Encoder::pack_FuA(rtp_packet_t*& rtp, FU_INDICATOR* idc, FU_HEADER* 
 	}
 	_sess.seq_number += 1;
 	rtp_pack(rtp, &_param, &_sess, Nalu, payload_len, 2);
+	if (rtp->payload_len > 1362 || rtp->ext_len > 0)
+	{
+		int a = 1;
+	}
 	FU_INDICATOR* pidc = (FU_INDICATOR*)rtp->arr;
 	pidc->F = idc->F;
 	pidc->NRI = idc->NRI;
@@ -199,10 +225,15 @@ void RtpH264Encoder::pack_FuA(rtp_packet_t*& rtp, FU_INDICATOR* idc, FU_HEADER* 
 	phdr->S = hdr->S;
 	phdr->R = hdr->R;
 	phdr->TYPE = hdr->TYPE;
+	if (rtp->payload_len > 1362 || rtp->ext_len > 0)
+	{
+		int a = 1;
+	}
 }
 
 rtp_packet_t* RtpH264Encoder::pack_single(const char* Nalu, int len, bool time_inc)
 {
+	std::cout << "PACK SINGLE" << std::endl;
 	rtp_packet_t* rtp = rtp_alloc(len);
 	if (time_inc)
 	{

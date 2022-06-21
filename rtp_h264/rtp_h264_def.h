@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define NALU_TYPE_MASK 0X0f
+#define NALU_TYPE_MASK 0X1f
 
 #define NALU_TYPE_SPS 0x07
 #define NALU_TYPE_PPS 0x08

@@ -128,27 +128,29 @@ NALU* RtpH264Decoder::assembly_nalu(const std::list<rtp_packet_t*>&)
 	{
 		return nullptr;
 	}
-	nalu->payload_len = total_len;
+	nalu->payload_len = total_len + 1;
 	nalu->payload = (uint8_t*)malloc(nalu->payload_len);
 	nalu->start_code[0] = 0x0;
 	nalu->start_code[1] = 0x0;
 	nalu->start_code[2] = 0x01;
 	nalu->start_code[3] = 0x01;
 	nalu->_start_code_len = 3;
-	/*nalu->hdr = (NALU_HEADER*)nalu->payload;
 
-	FU_INDICATOR* idc = (FU_INDICATOR*)(nalu->payload + 1);
-	FU_HEADER* hdr = (FU_HEADER*)(nalu->payload + 2);
-	nalu->hdr->F = 0;
-	nalu->hdr->NRI = idc->NRI;
-	nalu->hdr->TYPE = hdr->TYPE;*/
-	int off = 0;
+	FU_INDICATOR* idc = (FU_INDICATOR*)(_fu_list.front()->arr);
+	FU_HEADER* hdr = (FU_HEADER*)(_fu_list.front()->arr + 1);
+	
+	int off = 1;
 	for (auto it = _fu_list.begin(); it != _fu_list.end(); ++it)
 	{
 		memcpy(nalu->payload + off, (*it)->arr + 2, (*it)->payload_len - 2);
 		off += ((*it)->payload_len - 2);
 	}
+
 	nalu->hdr = (NALU_HEADER*)nalu->payload;
+	nalu->hdr->F = 0;
+	nalu->hdr->NRI = idc->NRI;
+	nalu->hdr->TYPE = hdr->TYPE;
+
 	return nalu;
 }
 

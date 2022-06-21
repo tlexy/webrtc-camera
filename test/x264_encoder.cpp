@@ -49,9 +49,9 @@ void X264Encoder::init(int width, int height, int fps)
 	///slice :live 直播
 	pParam->i_slice_count = 1;
 
-	pParam->rc.i_bitrate = 200;       // 设置码率,在ABR(平均码率)模式下才生效，且必须在设置ABR前先设置bitrate
+	pParam->rc.i_bitrate = 500;       // 设置码率,在ABR(平均码率)模式下才生效，且必须在设置ABR前先设置bitrate
 	pParam->rc.i_rc_method = X264_RC_ABR;  // 码率控制方法，CQP(恒定质量)，CRF(恒定码率,缺省值23)，ABR(平均码率)
-	x264_param_apply_profile(pParam, "baseline");
+	x264_param_apply_profile(pParam, "high");//baseline
 
 	//open encoder
 	pHandle = x264_encoder_open(pParam);
@@ -107,7 +107,7 @@ void X264Encoder::encode_thread()
 	sess.seq_number = 10086;
 	sess.timestamp = 0;
 	sess.ssrc = 80136561l;
-	rh->init(param, sess, 3000);
+	rh->init(param, sess, 1500);
 
 	while (!_is_stop) 
 	{
@@ -156,6 +156,7 @@ void X264Encoder::encode_thread()
 					{
  						int a = 1;
 					}
+					std::cout << "payload: " << pNals[i].i_payload - off << std::endl;
 					rh->encode((const char*)pNals[i].p_payload + off, pNals[i].i_payload - off);
 					rtp_packet_t* rtp;
 					int rr = rh->get_packet(rtp);
