@@ -29,6 +29,7 @@ NALU* RtpH264Decoder::decode_rtp(const uint8_t* payload, int len)
 	}
 	else
 	{
+		std::cout << "decode fua..." << std::endl;
 		return decode_fua(rtp);
 	}
 }
@@ -53,6 +54,7 @@ NALU* RtpH264Decoder::decode_fua(rtp_packet_t* rtp)
 			|| rtp->hdr.seq_number < _last_seqno
 			|| _fu_list.size() == 0)
 		{
+			std::cout << "decode_fua free all" << std::endl;
 			rtp_free(rtp);
 			//丢弃所有收到的fua包
 			for (auto it = _fu_list.begin(); it != _fu_list.end(); ++it)
@@ -171,7 +173,7 @@ NALU* RtpH264Decoder::decode_single(rtp_packet_t* rtp)
 		nalu->start_code[2] = 0x00;
 		nalu->_start_code_len = 4;
 	}
-
+	std::cout << "decode single..." << std::endl;
 	//假设只有拆分包，没有组合包
 	if (hdr->TYPE != 28)
 	{

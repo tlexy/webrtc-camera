@@ -181,10 +181,12 @@ void RtpH264Encoder::pack(rtp_packet_t*& rtp)
 			{
 				_pack_rtp.push_back(rtp_temp);
 			}
-			if ((hdr->TYPE & NALU_TYPE_MASK) == NALU_TYPE_IDR)
+			//对于分片单元，第二个分片开始时间不再增加
+			time_inc = false;
+			/*if ((hdr->TYPE & NALU_TYPE_MASK) == NALU_TYPE_IDR)
 			{
 				time_inc = false;
-			}
+			}*/
 		}
 		rtp = _pack_rtp.front();
 		_pack_rtp.pop_front();

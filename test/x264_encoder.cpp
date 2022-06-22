@@ -49,6 +49,8 @@ void X264Encoder::init(int width, int height, int fps)
 	pParam->i_keyint_max = 30;              //在此间隔设置IDR关键帧
 	///slice :live 直播
 	pParam->i_slice_count = 1;
+	pParam->i_timebase_den = 30;
+	pParam->i_timebase_num = 1;
 
 	pParam->rc.i_bitrate = 500;       // 设置码率,在ABR(平均码率)模式下才生效，且必须在设置ABR前先设置bitrate
 	pParam->rc.i_rc_method = X264_RC_ABR;  // 码率控制方法，CQP(恒定质量)，CRF(恒定码率,缺省值23)，ABR(平均码率)
@@ -108,7 +110,7 @@ void X264Encoder::encode_thread()
 	sess.seq_number = 10086;
 	sess.timestamp = 0;
 	sess.ssrc = 80136561l;
-	rh->init(param, sess, 1500);
+	rh->init(param, sess, 3000);
 
 	while (!_is_stop) 
 	{
