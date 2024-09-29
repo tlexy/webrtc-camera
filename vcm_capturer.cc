@@ -32,6 +32,8 @@ bool VcmCapturer::Init(size_t width,
 
   char device_name[256];
   char unique_name[256];
+  memset(device_name, 0x0, sizeof(device_name));
+  memset(unique_name, 0x0, sizeof(unique_name));
   if (device_info->GetDeviceName(static_cast<uint32_t>(capture_device_index),
                                  device_name, sizeof(device_name), unique_name,
                                  sizeof(unique_name)) != 0) {

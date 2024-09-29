@@ -193,7 +193,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(uint32_t deviceNumber,
                   GetProductId(deviceUniqueIdUTF8, productUniqueIdUTF8,
                                productUniqueIdUTF8Length);
                 }
-                std::cout << deviceUniqueIdUTF8 << "\t" << deviceNameUTF8 << std::endl;
+                //std::cout << deviceUniqueIdUTF8 << "\t" << deviceNameUTF8 << std::endl;
               }
             }
           }
@@ -206,7 +206,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(uint32_t deviceNumber,
     }
   }
   if (deviceNameLength) {
-    RTC_DLOG(LS_INFO) << __FUNCTION__ << " " << deviceNameUTF8;
+    //RTC_DLOG(LS_INFO) << __FUNCTION__ << " " << deviceNameUTF8;
   }
   return index;
 }

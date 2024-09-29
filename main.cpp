@@ -19,19 +19,36 @@ int main()
     int num_devices = info->NumberOfDevices();
     std::cout << "nums of device: " << num_devices << std::endl;
 
-    auto player = std::make_shared<SdlPlayer>();
+    for (int i = 0; i < num_devices; ++i)
+    {
+        char device_name[256];
+        char unique_name[256];
+        memset(device_name, 0x0, sizeof(device_name));
+        memset(unique_name, 0x0, sizeof(unique_name));
+        int ret = info->GetDeviceName(i, device_name, sizeof(device_name), unique_name, sizeof(unique_name));
+        if (ret == 0)
+        {
+            std::cout << device_name << " --------- " << unique_name << std::endl;
+        }
+        else 
+        {
+            std::cout << "get device name error, idx=" << i << std::endl;
+        }
+    }
+
+    /*auto player = std::make_shared<SdlPlayer>();
 
     int width = 1080;
     int height = 720;
-    auto capturer = webrtc::test::VcmCapturer::Create(width, height, 30, 0);
+    auto capturer = webrtc::test::VcmCapturer::Create(width, height, 30, 2);
 
     capturer->AddSubscriber(player);
 
     capturer->StartCapture();
 
-    player->start(capturer->RealWidth(), capturer->RealHeight());
+    player->start(capturer->RealWidth(), capturer->RealHeight());*/
 
     std::cin.get();
-    player->stop();
+    //player->stop();
 	return 0;
 }
