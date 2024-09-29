@@ -44,8 +44,13 @@ uint32_t HashDjb2(const uint8_t* src, uint64_t count, uint32_t seed) {
     HashDjb2_SSE = HashDjb2_AVX2;
   }
 #endif
+#if defined(HAS_HASHDJB2_NEON)
+  if (TestCpuFlag(kCpuHasNEON)) {
+    HashDjb2_SSE = HashDjb2_NEON;
+  }
+#endif
 
-  while (count >= (uint64_t)(kBlockSize)) {
+  while (count >= (uint64_t)kBlockSize) {
     seed = HashDjb2_SSE(src, kBlockSize, seed);
     src += kBlockSize;
     count -= kBlockSize;
@@ -134,6 +139,11 @@ uint64_t ComputeHammingDistance(const uint8_t* src_a,
     HammingDistance = HammingDistance_NEON;
   }
 #endif
+#if defined(HAS_HAMMINGDISTANCE_NEON_DOTPROD)
+  if (TestCpuFlag(kCpuHasNeonDotProd)) {
+    HammingDistance = HammingDistance_NEON_DotProd;
+  }
+#endif
 #if defined(HAS_HAMMINGDISTANCE_SSSE3)
   if (TestCpuFlag(kCpuHasSSSE3)) {
     HammingDistance = HammingDistance_SSSE3;
@@ -192,6 +202,11 @@ uint64_t ComputeSumSquareError(const uint8_t* src_a,
 #if defined(HAS_SUMSQUAREERROR_NEON)
   if (TestCpuFlag(kCpuHasNEON)) {
     SumSquareError = SumSquareError_NEON;
+  }
+#endif
+#if defined(HAS_SUMSQUAREERROR_NEON_DOTPROD)
+  if (TestCpuFlag(kCpuHasNeonDotProd)) {
+    SumSquareError = SumSquareError_NEON_DotProd;
   }
 #endif
 #if defined(HAS_SUMSQUAREERROR_SSE2)
@@ -359,10 +374,10 @@ static double Ssim8x8_C(const uint8_t* src_a,
         (sum_a_sq + sum_b_sq + c1) *
         (count * sum_sq_a - sum_a_sq + count * sum_sq_b - sum_b_sq + c2);
 
-    if (ssim_d == 0.0) {
+    if (ssim_d == 0) {
       return DBL_MAX;
     }
-    return ssim_n * 1.0 / ssim_d;
+    return (double)ssim_n / (double)ssim_d;
   }
 }
 
