@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  *  Copyright (c) 2012 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
@@ -62,7 +62,8 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
 
   // Store the device name
   _deviceUniqueId = new (std::nothrow) char[nameLength + 1];
-  memcpy(_deviceUniqueId, deviceUniqueIdUTF8, nameLength + 1);
+  memcpy(_deviceUniqueId, deviceUniqueIdUTF8, nameLength);
+  _deviceUniqueId[nameLength] = '\0';
 
   if (_dsInfo.Init() != 0)
     return -1;
@@ -91,7 +92,7 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
     RTC_LOG(LS_INFO) << "Failed to add the capture device to the graph.";
     return -1;
   }
-  //»ñµÃ_captureFilterµÄÊä³öÒý½Å
+  //èŽ·å¾—_captureFilterçš„è¾“å‡ºå¼•è„š
   _outputCapturePin = GetOutputPin(_captureFilter, PIN_CATEGORY_CAPTURE);
   if (!_outputCapturePin) {
     RTC_LOG(LS_INFO) << "Failed to get output capture pin";
@@ -106,7 +107,7 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
     RTC_LOG(LS_INFO) << "Failed to add the send filter to the graph.";
     return -1;
   }
-  //»ñµÃÊäÈëÒý½Å£¨ÉãÏñÍ·µÄÊý¾Ý½«´Óµ×²ãÍ¨¹ýÕâ¸ö½Ó¿Ú´«µÝ¸øÉÏ²ã£¿£¿£¿£©
+  //èŽ·å¾—è¾“å…¥å¼•è„šï¼ˆæ‘„åƒå¤´çš„æ•°æ®å°†ä»Žåº•å±‚é€šè¿‡è¿™ä¸ªæŽ¥å£ä¼ é€’ç»™ä¸Šå±‚ï¼Ÿï¼Ÿï¼Ÿï¼‰
   _inputSendPin = GetInputPin(sink_filter_);
   if (!_inputSendPin) {
     RTC_LOG(LS_INFO) << "Failed to get input send pin";

@@ -83,6 +83,7 @@ const char* VideoFrameBufferTypeToString(VideoFrameBuffer::Type type) {
       return "kNV12";
     default:
       RTC_DCHECK_NOTREACHED();
+      return "unknown";
   }
 }
 

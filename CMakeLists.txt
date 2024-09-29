@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
-#set(CMAKE_AUTOMOC ON)
-#set(CMAKE_AUTOUIC ON)
-#set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 project(webrtc_camera)
 
@@ -14,8 +14,8 @@ endif()
 
 set(BUILD_SHARED_LIBS OFF)
 
-#set(QT_BIN_DIR D:/Qt/Qt5.12.12/5.12.12/msvc2017_64/bin)
-#set(Qt5_DIR D:/Qt/Qt5.12.12/5.12.12/msvc2017_64/lib/cmake/Qt5)
+#set(QT_BIN_DIR C:/Qt/Qt5.14.2/5.14.2/msvc2017_64/bin)
+#set(Qt5_DIR C:/Qt/Qt5.14.2/5.14.2/msvc2017_64/lib/cmake/Qt5)
 
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -47,7 +47,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_NAME}/bin)
 
 set(SDL_PATH ${SDK_DIR}/3rd/SDL2-2.0.14)
 set(YUV_PATH ${SDK_DIR}/3rd/libyuv)
-set(JPEG_PATH ${SDK_DIR}/3rd/libjpeg-turbo-2.1.3)
+
+#set(JPEG_DIR ${SDK_DIR}/3rd/libjpeg-turbo64/lib/cmake/libjpeg-turbo)
 
 set(JPEG_SYS_PATH  ${SDK_DIR}/3rd/libjpeg-turbo64)
 
@@ -56,10 +57,18 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	add_definitions(-DWIN32)
     add_definitions(-D_WIN32)
     add_definitions(-DWEBRTC_WIN)
+    add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
+    add_definitions(-DHAVE_JPEG)
+    add_definitions(-D_DEBUG)
+    
 endif()
 
-message("this is test")
-message(STATUS ${SDL_PATH})
+set(JPEG_FOUND TRUE)
+set(JPEG_INCLUDE_DIR ${JPEG_SYS_PATH}/include)
+set(JPEG_LIBRARY ${JPEG_SYS_PATH}/lib/jpeg-static.lib)
+
+#message("this is test")
+#message(STATUS ${SDL_PATH})
 
 include_directories(${SDK_DIR})
 include_directories(${SDL_PATH}/include)
@@ -80,7 +89,6 @@ jpeg.lib
 turbojpeg.lib
 )
 
-#find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 file(GLOB SRCS 
 ./*.cpp
@@ -98,6 +106,8 @@ windows/*.cc
 test/*.h
 test/*.cpp
 )
+
+#find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 

@@ -20,7 +20,7 @@
 #include "common/ref_counted_object.h"
 #include "common/time_utils.h"
 //#include "rtc_base/trace_event.h"
-#include "3rd/libyuv/include/libyuv.h"
+#include "libyuv.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -138,7 +138,7 @@ int32_t VideoCaptureImpl::IncomingFrame(uint8_t* videoFrame,
   int stride_uv = (width + 1) / 2;
   int target_width = width;
   int target_height = abs(height);
-  std::cout << "IncomingFrame, width=" << width << ",height=" << height << ",target_height=" << target_height << ",len=" << videoFrameLength << std::endl;
+  //std::cout << "IncomingFrame, width=" << width << ",height=" << height << ",target_height=" << target_height << ",len=" << videoFrameLength << std::endl;
   // SetApplyRotation doesn't take any lock. Make a local copy here.
   bool apply_rotation = apply_rotation_;
 
