@@ -1,4 +1,7 @@
 ## windows摄像头采集（webrtc windows camera capture)
+### 不再更新
+* 当前的实现使用了比较旧的direct show来实现，问题可能比较多，并且代码复杂且难以看懂
+* 当前如果要实现一个新的windows摄像头功能，都应该使用新版本的sdk，即MediaFoundation，不应该再使用direct show技术。
 ### 这个是什么项目
 * 从webrtc windows源代码中抠出来的摄像头采集模块
 * 只做了少量的修改（绝大多数的修改是为减少webrtc底层库的依赖）
